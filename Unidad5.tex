@@ -1,0 +1,446 @@
+\section{Unidad 5: Seguridad en Redes}
+
+\subsection{Introducción}
+Definiciones:
+
+\begin{itemize}
+	\item \textbf{TCP}: \textit{Transmission Control Protocol}, protocolo
+	orientado a la conexión. Provee control de flujo, recuperación de errores
+	y confiabilidad.
+	\item \textbf{UDP}: \textit{User Datagram Protocol}, protocolo orientado
+	a la conexión. Muy sencillo, no provee garantías. La recuperación de errores
+	es responsabilidad de la aplicación.
+	\item \textbf{ICMP}: \textit{Internet Control Message Protocol}. Es usado para
+	mensajes de control, mensajes de error, etc. El Ping utiliza ICMP. Algunos tipos
+	de ICMP:
+		\begin{itemize}
+			\item Echo Request
+			\item Echo Reply
+			\item Destination Unreachable
+			\item Time Exceeded
+			\item Timestamp
+			\item Timestamp Reply
+			\item Redirect Message
+		\end{itemize}
+\end{itemize}
+
+\subsubsection{Three Way Handshake}
+
+\ig{0.3}{U5_tcp_3way.png}
+
+\subsubsection{Sniffers}
+
+\begin{itemize}
+	\item Un \textit{Sniffer} es un programa de software o hardware que puede ``ver'' y registrar
+	el tráfico que pasa sobre una red digital. Mientras el flujo de datos viaja por la red, el
+	sniffer captura cada paquete y opcionalmente lo decodifica en base a reglas, estándares y
+	especificaciones.
+	\item Se puede sniffear todo el tráfico que pasa por una red o solo una parte.
+	\item Opera en ``modo promiscuo'' porque escucha todo lo que pasa en el medio, incluso lo que
+	no va para él.
+	\item Usos:
+		\begin{itemize}
+			\item Analizar problemas de red.
+			\item Detectar intentos de intrusión a través de la red.
+			\item Obtener información para luego hacer una intrusión.
+			\item Monitorear el uso de la red.
+			\item Reportar estadísticas de red.
+			\item Espiar a otros usuarios de la red.
+			\item Hacer ingeniería reversa de protocolos.
+		\end{itemize}
+	\item Ejemplo: TCPDump, Wireshark, etc.
+\end{itemize}
+
+\subsubsection{Monitoreo}
+
+\begin{itemize}
+	\item La mayoría de las redes \textit{switcheadas} puede definir un puerto de monitoreo, mecanismo
+	conocido como \textit{port mirroring}. En este puerto se copia todo el tráfico. Sino se puede utilizar
+	un \textit{network tap} insertado en el segmento de red para que transmita todo el tráfico.
+	\item Se puede utilizar una estación de trabajo con dos placas de red, para armar un \textit{bridge}
+	transparente. Para administrar este equipo que esta en el medio del tráfico, se puede usar una tercera
+	placa con IP para accederla por afuera.
+\end{itemize}
+
+\subsubsection{ARP spoofing}
+
+\begin{itemize}
+	\item Definición: ARP (\textit{Address Resolution Protocol}) es el protocolo responsable de encontrar
+	la dirección de hardware (MAC) que corresponde a una determinada IP. 
+	\item Funcionamiento: Se envía un paquete del tipo ARP Request a la dirección de Broadcast conteniendo la
+	dirección IP a la que se quiere contactar. Se espera un ARP Reply con la dirección MAC correspondiente.
+	\item ARP Table: Cada equipo tiene una tabla temporal como \textit{cache} de resultados obtenidos.
+	\item ARP Spoofing: Consiste en, con el propósito de hacerse pasar por otra una maquina con otra IP (por ejemplo
+	el \textit{default gateway}), enviar paquetes ARP Reply \textit{spoofeados} a la red local para que quede asociado
+	a esa IP.
+\end{itemize}
+
+\subsubsection{IP spoofing}
+
+\begin{itemize}
+	\item IP spoofing consiste en crear paquetes IP con una IP de origen distinta a la IP del que envía.
+	\item El receptor confía en que la IP del paquete es la del emisor.
+	\item Sirve diversos propósitos:
+		\begin{itemize}
+			\item Esconder el origen de un ataque.
+			\item Secuestrar una sesión abierta.
+			\item Aprovecharse de aplicaciones que autentifican con la IP de origen.
+		\end{itemize}
+\end{itemize}
+
+\subsubsection{Ataques de Denegación de Servicio}
+
+\begin{itemize}
+	\item Definición: Un ataque de Denegación de Servicio (DoS) consiste en evitar que un sistema pueda ser usado
+	por usuarios legitimos, generalmente mediante la sobrecarga de pedidos tal que no hay recursos suficientes para
+	los pedidos legitimos.
+	\item Ataque de SYN Flooding: 
+		\begin{itemize}
+			\item Cada paquete con el \textit{flag} SYN prendido crea una nueva conexión \textit{half-open}.
+			\item Estas conexiones tardan minutos en \textit{timeout}ear y desaparecer.
+			\item Las tablas de conexiones son finitas, con lo cual se pueden sobrecargar.
+			\item Se puede \textit{spoofear} la IP.
+			\item Se pueden utilizar las SYN Cookies para evitar esto.
+				\begin{itemize}
+					\item Las SYN Cookies son para establecer el número inicial de secuencia TCP de manera de poder saber
+					que MSS esta usando la conexión y poder reconstruir esa cola SYN en su momento.
+					\item Es decir, se guarda el estado en el número de secuencia y no en el servidor (disminuye la carga).
+					\item Se calcula en base de las IPS, puertos, etc.
+				\end{itemize}
+		\end{itemize}	
+	\item Reset de Conexiones:
+		\begin{itemize}
+			\item Un host envia un paquete RST con una IP \textit{spoofeada} a cualquier extremo de la conexión. 
+			\item Necesito saber las IPs y puertos de los extremos de la conexión.
+			\item Necesito tener un numero de secuencia dentro de la ventana que se esta enviando. Lo puedo obtener
+			escuchando el tráfico y adivinando con los bits.
+		\end{itemize}
+	\item Ataque de ICMP: 
+		\begin{itemize}
+			\item Fabricar un paquete ICMP que indique un error ``hard''
+			\begin{itemize}
+				\item Protocol Unreachable
+				\item Port unreachable
+				\item Fragmentation Needed y DF set.
+			\end{itemize}
+			\item Segun el RFC 1122, TCP debería abortar la conexión.
+			\item No se recomienda hacer chequeo de los errores por lo tanto no hay que adivinar números de secuencia.
+		\end{itemize}
+\end{itemize}
+
+\subsubsection{Comandos varios}
+
+\begin{itemize}
+	\item Los Protocolos r (\textit{rcp}, \textit{rlogin}, \textit{rsh}, \textit{rwho}). 
+	\item Permitir el acceso a terminales remotos sin tener que loguearse con usuario y clave.
+	\item Los archivos \texttt{/etc/hosts.equiv} y \texttt{.rhosts} proveen el mecanismo de autenticación.
+	\begin{itemize}
+		\item Especifican que equipos remotos son confiables.
+		\item Los usuarios confiables pueden acceder sin password.
+		\item \texttt{/etc/hosts.equiv} vale para todo el sistema, cada usuario tiene su \texttt{.rhosts}
+	\end{itemize}
+	\item Ident: Protocolo para identificar al usuario remoto de una conexión TCP determinada.
+	\begin{itemize}
+		\item Permite especificar dos puertos (uno X local a la maquina A y otro remoto Y en la maquina B) para que
+		B devuelva el usuario que esta conectado desde el puerto Y de B al X de A.
+	\end{itemize}
+	\item Telnet
+	\begin{itemize}
+		\item Login remoto.
+		\item Tráfico en claro.
+		\item User y password para loguearse.
+		\item Suceptible a \textit{man in the middle}, \textit{session hijacking}, etc.
+	\end{itemize}
+	\item SSH
+	\begin{itemize}
+		\item Login remoto, transferencias de archivos, y \textit{tunneling} de conexiones.
+		\item Cifra todo el tráfico para eliminar las ``escuchas''.
+		\item Mecanismo de user/pass o mecanismo de pares de claves 
+		\item Protege MitM, Session Hijacking, Spoofing, Sniffing, Tampering, etc.
+	\end{itemize}
+	\item TFTP:
+	\begin{itemize}
+		\item Protocolo sin autenticación para transferencia de archivos.
+		\item Se puede usar para bootear discos a través de una red.
+	\end{itemize}
+	\item HTTP (80):
+	\begin{itemize}
+		\item Protocolo de aplicación para sistemas de información hipermediales, distribuidos y colaborativos.
+		\item Protocolo simple, \textit{stateless}, basado en texto.
+		\item Cliente envía \textit{requests} al servidor, con un método (GET,POST,etc.), URI, headers y un cuerpo opcional.
+		\item 
+	\end{itemize}
+	\item HTTP Authentication
+	\begin{itemize}
+		\item Cliente hace un \textit{request}
+		\item Servidor responde con código 401 y pide autenticación.
+		\item Cliente envía la request, y además sus credenciales encodeadas en base 64 (no provee confidencialidad)
+		\item Servidor valida las credenciales y contesta con el pedido.
+	\end{itemize}
+	\item HTTPS (443)
+	\begin{itemize}
+		\item Comunicación encriptada mediante SSL.
+		\item Permite identificar fehacientemente al servidor y da confidencialidad.
+		\item 
+	\end{itemize}
+	\item SMTP, POP3
+	\begin{itemize}
+		\item Se pueden usar con SSL
+		\item Problema de \textit{Open Relay}: Un servidor configurado para enviar mail de cualquier dirección y a 
+		cualquier dirección. Solía ser la configuración por \textit{default}. Es usado por \textit{spammers} y usualmente
+		esta blacklisteada.
+	\end{itemize}
+	\item DNS
+	\begin{itemize}
+		\item \textit{Domain Name System} como esquema jerárquico de resolución de nombres.
+		\item Hay servidores primarios y secundarios, que resuelven de a pedazos.
+		\item Las consultas se responden preguntando quien es el servidor responsable de cada zona.
+	\end{itemize}
+	\item SMTP
+	\begin{itemize}
+		\item \textit{Simple Network Management Protocol} versión v3 sirve para administrar máquinas con ambiente no asegurado.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Firewalls}
+
+\begin{itemize}
+	\item \textbf{Firewall: } Es un separador entre dos partes de una red para controlar lo que pasa entre ellas. 
+	\item \textbf{Propositos: }
+		\begin{itemize}
+			\item Proteger mis datos, a nivel de confidencialidad, integridad y disponibilidad.
+			\item Proteger mis recursos de uso por agentes externos (ejemplo \textit{botnets}, \textit{zombies}, etc.).
+			\item Proteger mi reputación: Evitar que mis recursos se usen para fines maliciosos generando desconfianza en mí.
+		\end{itemize}
+	\item \textbf{Tipos: }
+		\begin{itemize}
+			\item Filtrado de paquetes: Cada paquete que entra o sale de la red es verificado y permitido o denegado de acuerdo
+			a un conjunto de reglas definidas por el usuario.
+			\begin{itemize}
+				\item Se basa en las direcciones (IP + Puerto) de origen y destino, además del protocolo.
+				\item Suelen usarse en los routers.
+				\item Son eficientes y fáciles de implementar.
+				\item Puede producir reglas complicadas y potencialmente inseguras. Por ejemplo:
+				\item FTP Activo, reglas para el servidor y cliente: \begin{itemize}
+					\item S: Permitir cualquier puerto $p \in [1024,65535]$ al 21 del server FTP
+					\item S: Permitir al 21 del server FTP cualquier $p \in [1024,65535]$
+					\item S: Permitir al 20 del server FTP cualquier $p \in [1024,65535]$
+					\item C: Permitir cualquiera en mi red de cualquier puerto alto a un puerto 21
+					\item C: Permitir cualquier 21 a un puerto alto.
+					\item C: Permitir cualquier 20 a un puerto alto.
+					\item C: Permitir cualquiera en mi red de cualquier puerto alto a un puerto 20.
+				\end{itemize}
+			\end{itemize}
+			\item Stateful Inspection: Es como filtrado de paquetes normal, pero además puede tener en cuenta el estado de la sesión
+			de la conexión, y utilizarlas para aplicar reglas que varían según el momento de la conexión. 
+			\begin{itemize}
+				\item Puede analizar el protocolo superior que se esta usando.
+				\item Mayor precisión en el filtrado, reglas más cortas y más estrictas.
+				\item Mayor necesidad de procesamiento para cada paquete y cada conexión (potencialmente caro).
+			\end{itemize}
+			\item Gateways de circuito: \textit{proxy} no inteligente, simplemente renvían la conexión. Están en la capa de sesión del 
+			modelo OSI\. Son independientes del protocolo pero el cliente debe conocerlo. Se usan con políticas estrictas de filtrado.
+			\item Gateways de aplicación: \textit{proxy} inteligente. Conoce del protocolo con el que se esta haciendo la comunicación. El
+			cliente no solo debe conocerlo sino que se debe estar usando un protocolo que permita proxys. Permite un mejor uso de autenticación,
+			permite un mejor control de uso de servicios y facilita la generación de registros de auditoría y el uso de caches.
+			\item Ingress/Egress Filtering: Sirve para evitar IP Spoofing. Ingress es que no permito pasar paquetes a mi red que vienen de afuera pero 
+			cuya IP de origen es una IP interna. Egress es que paquetes con IP \textit{spoofeada} no pasan por el Firewall (para evitar que se
+			dañe mi reputación).
+			\item Personal: Es un software instalado en una computadora generalmente personal y que controla la comunicación entre el equipo y
+			el mundo exterior. Permiten por ejemplo filtrar accesos por aplicación, protocolo, etc\. y consultar al usuario cuando una aplicación
+			quiere hacer una conexión.
+		\end{itemize}
+\end{itemize}
+
+\subsubsection{NAT}
+
+\begin{itemize}
+	\item Definición: \textit{Network Address Translation}. Consiste en rescribir las IPs de origen y destino \textit{on the fly} para permitir
+	modificar las políticas de envio. Se usa por ejemplo para tener una red privada con un punto de acceso en la internet pública (ejemplo: un router
+	\textit{wifi} que usa NAT para tener una sola IP pública que le da el \textit{ISP} pero para llegar a todos los dispositivos de la casa, renviandoles
+	a sus IPS privadas de manera acorde).
+	\item Tipos: \begin{itemize}
+		\item DNAT: Consiste en modificar la IP de destino a los paquetes que llegan a una IP privada, y modificar la IP de origen cuando ocurre lo inverso.
+		También conocido como \textit{port forwarding}. Se usa para publicar un servicio local en la Internet, o poner un servidor en la \textit{DMZ}.
+		\item SNAT: Lo mismo que DNAT pero usando la IP de origen. El significado varía segun \textit{vendor}
+		\item IP Masquerading: Consiste en que el Router enmascara la IP de una computadora local con la propia, de manera que el pedido parece venir
+		de la IP indicada en la máscara. Permite ocultar la topología de la Red. Es una forma de SNAT.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Esquemas de redes}
+
+\begin{itemize}
+	\item Screening Router: Filtra paquetes a la red interna. Generalmente usan filtrado estático y reglas complejas.
+	\item Bastion Host: Se utiliza un servidor en la DMZ que es el que esta más ``expuesto'' a ataques. Generalmente corre un proxy server
+	y nada más, y se tunea especialmente (se lo audita seguido, corre software parcheado y que no tenga exploits conocidos, etc.) para ser lo más resistente 
+	posible a ataques. Suele tener reglas simples para evitar agujeros que permitan ataques. Protege entonces el resto de la red.
+	\item Screened Host: Se utiliza un Bastion Host que efectivamente SEPARA las dos redes. Usa proxies y es muy seguro. Como el Bastion Host es el que hace
+	las requests entre zonas, no necesita NAT.
+\end{itemize}
+
+\subsubsection{Tipos de políticas de Firewall}
+
+\begin{itemize}
+	\item Default Permit: Permite todo salvo algunos protocolos.
+	\item Default Deny: Niega todo excepto lo explicitamente permitido.
+	\item Default Permit es MUY MUY INSEGURO, porque cualquier servicio habilitado sin conocimiento y que posee
+	una vulnerabilidad es una puerta a un ataque.
+\end{itemize}
+
+\subsubsection{Implementación}
+
+\begin{itemize}
+	\item Diseño de la red (topología)
+	\item Definición de políticas entre las redes (usando herramientas gráficas como FWBuilder o shorewall).
+	\item Mantenimiento: Mantener las reglas al día, mantener el software y el SO parcheados, y revisar los logs de firewall.
+\end{itemize}
+
+\subsection{Monitoreo de redes}
+
+\subsubsection{Recolección de trafico}
+
+\begin{itemize}
+	\item \textbf{tcpdump}: Consigue todos los paquetes, con un alto costo de almacenamiento y procesamiento pero permite mejor granularidad, con lo
+	cual se pueden utilizar todas las herramientas que queramos para analizarlos y se puede hacer un análisis forense más completo, incluso en
+	tráfico cifrado.
+	\item \textbf{sesiones (argus,...)}: Resumen de conversaciones entre sistemas. Es compacto e independiente de los datos que se esten enviando.
+	No tiene en cuenta datos de la aplicación así que no es suceptible por encriptación, utiliza los paquetes de los protocolos para armar tablas de
+	conversaciones.
+	\item \textbf{estadisticas (tcpdstat,...)}: Visión sumarizada de eventos, permite ver el tráfico a alto nivel. Se puede usar por ejemplo en equipos
+	que generen muchisimo tráfico.
+	\item \textbf{alertas (snort,...)}: Alerta por IDS tradicionales, por regla o anomalía.
+\end{itemize}
+
+\subsubsection{IDS}
+
+\begin{itemize}
+	\item Definición: Se denomina IDS (\textit{Intrusion detection system}) al proceso de monitorear los eventos que ocurren en un sistema o red de
+	computadoras, buscando señales que indiquen que haya habido o esta habiendo una intrusión.
+	\item Problemas comunes: \begin{itemize}
+		\item \textbf{Falso positivo}: Ocurre cuando una herramienta clasifica una acción como una posible intrusión pero la misma era un uso
+		legítimo del sistema, y no constituye una violación de seguridad. Se pueden disminuir haciendo más específicos los patrones a detectar.
+		\item \textbf{Falso negativo}: Ocurre cuando una intrusión no es detectada por el IDS.
+		\item \textbf{Falsa alarma}: Cuando se dispara una alerta por un ataque por un patrón de comportamiento que es parte de uno, pero donde el mismo
+		no representa un peligro. Por ejemplo, el uso de un exploit en un software distinto al vulnerable, o que fue parcheado, o que no funciono.
+	\end{itemize}
+	\item \textbf{Objetivos}: \begin{itemize}
+		\item Detectar una amplia variedad de intrusiones, con la correspondiente necesidad de adaptarse a nuevos ataques o patrones de comportamiento y
+		aprenderlos, por parte de la herramienta.
+		\item Detectar las intrusiones en un tiempo razonable, incluso a veces en tiempo real, sin afectar los tiempos de respuesta del sistema. Se puede
+		por ejemplo detectar intrusiones en las ultimas horas o minutos.
+		\item Presentar la información de manera fácil de entender: A veces se monitorean muchos sistemas, y el analista necesita además información sobre
+		el ataque para poder determinar si fue un ataque y que respuesta dar. Lo ideal sería un indicador binario (OK - Alerta) pero no alcanza.
+		\item Ser tan preciso como se pueda.
+	\end{itemize}
+	\item Clasificacion: \begin{itemize}
+		\item IDS de Host (HIDS, ejemplo Swatch) vs IDS de Red (NIDS, ejemplo SNORT). \begin{itemize}
+			\item NIDS: Reconoce patrones en el tráfico de Red.
+			\item HIDS: Monitorea logs e integridad de archivos, comportamiento extraño de usuarios, parametros de sistema excedidos.
+			\item Ataques a NIDS: Insertion (Meter un paquete que el IDS acepta pero el sistema no, de manera que ambos ven cosas distintas) y
+			Evasion (Meter un paquete que el IDS rechaza pero que el sistema aceptaría, de manera de esconder un ataque en por ejemplo la manera en la
+			que se rearman los paquetes).
+		\end{itemize}
+		\item Basado en heuristicas/estadisticas vs Basado en patrones
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{SNORT}
+
+Arquitectura: 
+
+\ig{0.6}{U5_arquitecturaNids.png}
+
+Componentes:
+
+\begin{itemize}
+	\item Sniffer: Captura los paquetes de la red usando pcap.
+	\item Decodificador: Identifica protocolos y construye las estructuras de datos necesarias para examinar los paquetes.
+	\item Preprocesadores: Prepara los datos para detección. Se dedica a por ejemplo detectar escaneos, ensamblar los datos
+	contenidos en paquetes de una misma sesión o reensamblar paquetes fragmentados.
+	\item Motor de detección: Analiza los paquetes en base a reglas definidas para detectar ataques.
+	\item Salida o postprocesadores: Permiten definir que, como y donde se guardan las alertas y los paquetes de red que las
+	generaron.
+\end{itemize}
+
+Diferencias y cosas a remarcar
+
+\begin{itemize}
+	\item Existen herramientas como Snorby o Sguil que permiten analizar los resultados de Snort.
+	\item Existen otras herramientas como Bro NSM que también pueden describir restricciones de actividad, analizar contexto,
+	relacionar eventos, etc.
+\end{itemize}
+
+\subsubsection{HIDS}
+
+\begin{itemize}
+	\item Swatch: \begin{itemize}
+		\item Empezo como un simple watchdog para monitorear actividades del log que producía syslog en UNIX.
+		\item Permite definir entradas a resaltar o ignorar.
+	\end{itemize}
+	\item Logcheck: \begin{itemize}
+		\item Similar a Swatch, con reglas adaptadas para Debian. Se ejecuta usualmente cada hora, revisa los logs
+		por data anormal y genera un reporte que se puede mandar por email.
+	\end{itemize}
+	\item Tripwire,Aide: \begin{itemize}
+		\item Monitorea el agregado, borrado y modificación de archivos. Genera una base de datos con la información
+		de cada archivo en el sistema. Periodicamente vuelve a generar la información y la compara.
+		\item Checkea archivos nuevos, eliminados, contenido y atributos (fecha, firmas, permisos, tamaño, etc.)
+	\end{itemize}
+	\item OSSEC \begin{itemize}
+		\item HIDS Open Source, multiplataforma, realiza analisis de logs, checkeo de integridad, monitoreo de registro, etc.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{IPS}
+
+\begin{itemize}
+	\item Definición: Un IPS de Red es un sistema de prevención de intrusiones, es decir que además de detectar intrusiones
+	puede hacer algo al respecto. Pueden ser de red o de host.
+	\item Red: Funciona como dispositivo inline en modo bridge, puede decidir filtrar el tráfico para que no llegue a destino
+	si detecta una intrusión. Puede también modificar el contenido del tráfico.
+	\item ModSecurity: Motor de detección y prevención de intrusiones para aplicaciones web, es un modulo de Apache. Es un 
+	IPS de Host.
+	\begin{itemize}
+		\item Intercepta pedidos HTTP antes de que sean procesados por el host.
+		\item Intercepta el cuerpo de los pedidos.
+		\item Intercepta almacena y valida los archivos subidos.
+		\item Realiza acciones antievasivas en forma automática.
+		\item Procesa mediante un conjunto de reglas configurables.
+		\item Las respuestas al cliente son también interceptadas y se analizan en base a reglas.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Honeypots}
+
+\begin{itemize}
+\item Honeypot: Es una trampa cuyo proposito es detectar, esquivar o contraatacar al mal uso de un sistema informático.
+	Se suele implementar como una computadora que parece estar conectada a la red y que tiene recursos de interés para un
+	atacante, pero que en realidad esta fuertemente monitoreada y aislada de la red.
+\item Tipos: \begin{itemize}
+		\item Baja interaccion: Emula servicios, aplicaciones, SO, etc. Bajo riesgo, faciles de mantener, pero proveen información limitada.
+		\item Alta interacción: Servicios, aplicaciones y SO reales. Consumen mucho tiempo de mantener, alto riesgo pero dan mucha información.
+	\end{itemize}
+\item Ejemplos en orden creciente de interacción: Honeyd, Nepenthes, Honeynets
+\item Honeyd: \begin{itemize}
+	\item Crea equipos virtuales en una red
+	\item Los equipos puede ser configurados para ejecutar servicios arbitrarios.
+	\item Simula distintos sistemas operativos.
+	\item Puede reportar resultados a Prelude.
+	\end{itemize}
+\item Nepenthes:\begin{itemize}
+	\item Baja interacción, emula vulnerabilidades conocidas, especialmente las que usan los worms para diseminarse y 
+	capturar worms.
+	\end{itemize}
+\item Honeynets: \begin{itemize}
+	\item Se agregan equipos enteros, no un producto o software. De alta interacción. Toda la red es altamente monitoreada y
+		los paquetes son capturados.
+	\item Control de flujo de datos:  Es necesario controlar los datos por el riesgo de que la honeynet sea usada como punto de ataque.
+	\item Captura de datos: Se toma la actividad de red, de sistema y de aplicaciones.
+	\item Análisis de datos.
+	\item Sebek: Herramienta de captura de datos que corre como módulo de kernel. Envia la información de la red sobre el atacante
+		a un servidor de manera que no se pueda sniffear, utilizando para eso SSH entre los dos. De esta manera se juntan datos sin
+		que el atacante lo sepa.
+	\end{itemize}
+\end{itemize}
+

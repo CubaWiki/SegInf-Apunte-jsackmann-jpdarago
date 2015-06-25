@@ -1,0 +1,682 @@
+%
+%  untitled
+%
+%  Created by Julian Sackmann on 2013-10-30.
+%  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+%
+\documentclass[]{article}
+
+% Use utf-8 encoding for foreign characters
+\usepackage[utf8]{inputenx}
+
+% Setup for fullpage use
+\usepackage{fullpage}
+
+% Uncomment some of the following if you use the features
+%
+% Running Headers and footers
+\usepackage{fancyhdr}
+
+
+% Multipart figures
+%\usepackage{subfigure}
+
+% More symbols
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+%\usepackage{latexsym}
+
+% Surround parts of graphics with box
+\usepackage{boxedminipage}
+
+% Package for including code in the document
+\usepackage{listings}
+
+% If you want to generate a toc for each chapter (use with book)
+\usepackage{minitoc}
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+\usepackage{indentfirst}
+\usepackage{empheq}
+\usepackage{footnote}
+\usepackage{multicol}
+\usepackage{mathtools}
+\usepackage{algorithm2e}
+\usepackage{tikz}
+\usetikzlibrary{matrix,decorations.pathreplacing}
+\usepackage{cancel}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usepackage{float}
+
+% \ifpdf
+% \usepackage[pdftex]{graphicx}
+% \else
+% \usepackage{graphicx}
+% \fi
+\title{Seguridad de la Información}
+\author{ Julián Sackmann y Juablo Darago}
+
+\date{10 de Septiembre de 2012}
+
+\pagestyle{fancy}
+\thispagestyle{fancy}
+\addtolength{\headheight}{12pt}
+\addtolength{\headsep}{0.3cm}
+\lhead{Seguridad de la Información}
+\rhead{Julián Sackmann y Juan Pablo Darago}
+\cfoot{P\'agina \thepage\ de \pageref{LastPage}}
+\renewcommand{\footrulewidth}{0.4pt}
+\setcounter{page}{0}
+
+\usepackage{lastpage}
+
+\begin{document}
+
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}~\newline\indent}
+
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+%\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{4}
+
+\newcommand{\ig}[2]{
+\begin{center}
+	\includegraphics[scale=#1]{images/#2}
+\end{center}}
+
+\newcommand{\caja}[2]{\begin{center}
+	\fbox{
+		\parbox{#1\linewidth}{
+			#2
+		}
+	}
+\end{center}}
+\renewcommand\contentsname{Índice}
+
+\newcommand{\tab}[0]{\hspace{2cm}}
+\newcommand{\partir}[4]{
+\begin{minipage}[b]{#1\linewidth}\centering\begin{center}#3\end{center}\end{minipage}\begin{minipage}[b]{#2\linewidth}\centering\begin{center}#4\end{center}\end{minipage}
+}
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{\LARGE Universidad de Buenos Aires}\\[1.5cm] % Name of your university/college
+\textsc{\Large Facultad de Ciencias exactas y Naturales}\\[0.5cm] % Major heading such as course name
+\textsc{\large Licenciatura en Ciencias de la computación}\\[0.5cm] % Minor heading such as course title
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Apunte de Seguridad de la Información}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+%
+% \begin{minipage}{0.4\textwidth}
+% \begin{flushleft} \large
+% \emph{Autor:}\\
+% Julián \textsc{Sackmann} % Your name
+% \end{flushleft}
+% \end{minipage}
+% ~
+% \begin{minipage}{0.4\textwidth}
+% \begin{flushright} \large
+% \emph{} \\
+%  \textsc{} % Supervisor's Name
+% \end{flushright}
+% \end{minipage}\\[4cm]
+
+% If you don't want a supervisor, uncomment the two lines below and remove the section above
+\Large \emph{Autores:}\\
+Julián \textsc{Sackmann}\\%[2cm] % Your name
+Juan Pablo \textsc{Darago}\\[1cm] % Your name
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+
+{\large 2 de Noviembre de 2013}\\[2cm] % Date, change the \today to a set date if you want to be precise
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}[t]{\textwidth}
+    \begin{minipage}[t]{.55 \textwidth}
+        \includegraphics{logo_uba.jpg}
+    \end{minipage}%%
+    \begin{minipage}[b]{.45 \textwidth}
+        \textbf{\textsf{Facultad de Ciencias Exactas y Naturales}} \\
+        \textsf{Universidad de Buenos Aires} \\
+        {\scriptsize %
+        Ciudad Universitaria - (Pabell\'on I/Planta Baja) \\
+            Intendente G\"uiraldes 2160 - C1428EGA \\
+        Ciudad Aut\'onoma de Buenos Aires - Rep. Argentina \\
+            Tel/Fax: (54 11) 4576-3359 \\
+        http://exactas.uba.ar \\
+        }
+    \end{minipage}
+\end{minipage}%
+
+%\includegraphics[scale=1]{logo_uba.jpg}\\[1cm] % Include a department/university logo - this will require the graphicx package
+%\includegraphics{logo_uba.jpg}\\[1cm] % Include a department/university logo - this will require the graphicx package
+
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+
+%\maketitle
+
+\thispagestyle{fancy}
+
+\tableofcontents
+
+\newpage
+
+\section{Unidad 1}
+\subsection{Definiciones}
+\begin{itemize}
+	\item \textbf{Información}: se refiere a toda comunicación o representación de conocimiento.
+	\item \textbf{Seguridad de la información}: se entiende como la preservación de: \textbf{Confidencialidad}, \textbf{Integridad} y \textbf{Disponibilidad}.
+	\item \textbf{Confidencialidad}: se garantiza que la información sea accesible sólo por aquellas personas autorizadas.
+	\item \textbf{Integridad}: se salvaguarda la exactitud y totalidad de la información y los métodos de procesamiento. La integridad incluye: la integridad de los datos (el contenido) y el origen de los mismos.
+	\begin{itemize}
+		\item Integridad de datos: nadie altere el contenido.
+		\item Integridad de origen: el origen de los datos sea cierto.
+	\end{itemize}
+	\item \textbf{Disponibilidad}: se garantiza que los usuarios autorizados tengan acceso a la información y a los recursos relacionados con la misma, toda vez que lo requieran.
+	\item \textbf{Vulnerabilidad}: una debilidad en un activo.
+	\item \textbf{Amenaza}: una violación potencial de la seguridad. No es necesario que la violación ocurra para que la amenaza exista. Las amenazas ``explotan'' vulnerabilidades.
+	\item \textbf{Ataque}: una acción que puede causar una violación.
+	\item \textbf{Atacante (o intruso)}: persona o entidad que ejecuta un ataque.
+\end{itemize}
+
+\subsection{Tipos de amenazas}
+\subsubsection{Flujo}
+Representamos el flujo normal de la información como un grafo donde los nódos son los entes que intercambian información y las aristas dirigidas la información que se transmite (mediante algún canal) entre un nodo y otro:
+\ig{0.6}{U1_flujoNormal.png}
+Las amenazas se pueden categorizar en las siguientes formas:
+
+
+\subsubsubsection{Interrupción de flujo}
+\ig{0.6}{U1_flujoInterrupcion.png}
+
+El flujo de datos entre un nodo y otro es completamente interrumppido. Amenaza la \textbf{disponibilidad} de la información. Puede darse por \emph{bloqueo}, \emph{saturación} o \emph{destrucción} del recurso. Un ejemplo de esta amenaza es un \emph{denial of service}.
+
+\subsubsubsection{Intercepción de flujo}
+\ig{0.6}{U1_flujoIntercepcion.png}
+
+El flujo de datos entre un nodo y otro es interceptado por un atacante, quién accede a la información, pero no la modifica. Amenaza la \textbf{confidencialidad} de la información. Puede darse por un \emph{acceso no autorizado} al recurso, \emph{monitoreo} o \emph{ingeniería social}. Un ejemplo de esta amenaza es un \emph{keylogger}.
+
+\subsubsubsection{Alteración de flujo}
+\ig{0.6}{U1_flujoAlterado.png}
+
+El flujo de datos entre un nodo y otro es interceptado por un atacante que lee la información y la modifica. Amenaza la \textbf{integridad} de la información. Un ejemplo de alteración de flujo son los ataques \emph{man in the middle}.
+
+
+\subsubsubsection{Fabricación de flujo}
+\ig{0.6}{U1_flujoFake.png}
+
+Un atacante se hace pasar el emisor y le envía información al receptor. Amenaza la \textbf{autenticidad} (se considera parte \textbf{integridad de origen}) de la información. Un ejemplo de alteración de flujo es el \emph{phishing}.
+
+\subsubsection{Pasividad del atacante}
+A su vez, las amenazas se pueden categorizarse en:
+
+\subsubsubsection{Amenazas pasivas}
+Son las que el atacante no interfiere con el sistema. Este sigue funcionando con normalidad. Suelen ser amenazas más difíciles de detectar y dependen fuertemente del medio físico de transmisión.
+
+Ejemplos:
+\begin{itemize}
+	\item \emph{Sniffing}
+	\item \emph{Side Channel Attack} (se basa en obtener información de la implementación física de un criptosistema. Ej: ``usuario o clave inválidos'' vs ``clave inválida'').
+\end{itemize}
+
+\subsubsubsection{Amenazas activas}
+Son las que el atacante interactúa con el sistema, no se limita a observar. Realiza acciones que afectan al sistema con diversos objetivos (obtener más información, asegurar que pueda volver a realizar la amenaza, modificar información, etc.)
+
+Algunos ejemplos son:
+\begin{itemize}
+	\item \emph{Keyloggers}
+	\item Suplantación de identidad.
+	\item Retransmisión de mensajes.
+	\item Falsificación de datos.
+	\item Escaneo de puertos.
+\end{itemize}
+
+\subsubsection{Otras}
+Las amenazas también se pueden categorizar en:
+
+\begin{itemize}
+	\item Intencionales vs accidentales.
+	\item Interas vs externas.
+\end{itemize}
+
+
+\subsubsection{Resumiendo}
+En resumen, las amenazas se categorizan en:
+\begin{itemize}
+	\item Flujo
+	\begin{itemize}
+		\item Interrupción
+		\item Intercepción
+		\item Alteración
+		\item Fabricación
+	\end{itemize}
+	\item Activo vs Pasivo
+	\item Intencionales vs accidentales.
+	\item Interas vs externas.
+\end{itemize}
+
+
+
+\subsection{Políticas y Mecanismos}
+Una \textbf{política de seguridad} es una declaración de lo que está permitido y lo que no. \emph{Es el qué}.
+
+Las políticas de seguridad son afectadas tanto por cuestiones tecnológicas como administrativas, de gerencia, etc.
+
+~\newline
+
+Un \textbf{mecanismo de seguridad} es un método, herramienta o procedimiento que intenta hacer cumplir una (o parte de una) política de seguridad. \emph{Es el cómo}.
+
+Los mecanismos de seguridad no son necesariamente automáticos y/o técnicos. Por ejemplo: pedir DNI para entrar a tal habitación.
+
+
+\subsection{Objetivos}
+El objetivo ideal de las políticas de seguridad es prevenir la ocurrencia de todo ataque. Como esto es imposible, se considera que la seguridad tiene tres objetivos:
+
+\begin{itemize}
+	\item \textbf{Prevención}: si un mecanismo logra este objetivo, entonces \underline{el ataque va a fallar}. Un ejemplo de esto es un ataque a través de internet a una computadora que no está conectada a ninguna red.
+
+	\item \textbf{Detección}: si un mecanismo logra este objetivo, entonces \underline{el ataque será detectado}. Puede ser usado tanto cuando el ataque no puede ser prevenido (por ejemplo para minimizar su impacto, o reaccionar de alguna forma) como cuando si (por ejemplo, para medir la efectividad del mecanismo de prevención). Los mecanismos de detección dan por hecho que un ataque va a ocurrir e intentan reportarlos lo antes posible.
+
+	\item \textbf{Recuperación}: si un mecanismo de seguridad logra este objetivo, significa que \underline{se pueden deshacer las} \underline{consecuencias de un ataque}. Luego de un ataque, se deben analizar y reparar daños y volver el sistema a operación normal en el menor tiempo posible. Por ejemplo, si un archivo fue borrado, puede ser recuperado de un backup.
+\end{itemize}
+
+
+\subsection{Relación costo-beneficio}
+Es importante notar que a la hora de implementar cualquier combinación de mecanismo/política de seguridad es necesario tener en consideración la relación costo/beneficio entre:
+\begin{itemize}
+	\item El costo de implementar la política y el mecanismo de seguridad.
+	\item El valor de la información que quiero proteger.
+\end{itemize}
+
+El costo de implementación no sólo hace referencia al costo monetario de poner en funcionamiento el mecanismo, sino también costos adicionales tales como:
+\begin{itemize}
+	\item Tiempo de implementación.
+	\item Costo computacional.
+	\item Complicar la interacción con el usuario.
+\end{itemize}
+
+\subsection{Evaluación de riesgos}
+Se entiende por \textbf{evaluación de riesgos} a la evaluación de las amenazas y vulnerabilidades relativas a la información y a las instalaciones de procesamiento de la misma, la probabilidad de que ocurran y su potencial impacto en la operatoria de la organización.
+
+Informalmente, consiste en saber cuáles son lo puntos más riesgosos riesgosos de la seguridad de una organización, qué impacto tendría su potencial violación y cómo se manejan.
+
+
+\newpage
+
+\section{Unidad 2}
+\subsection{Definiciones}
+\begin{itemize}
+	\item \textbf{Estado de un sistema}: es el conjunto de los valores actuales de todas las posiciones de memoria, almacenamiento secundario, registros, y otros componentes del sistema.
+	\item \textbf{Estado de protección de un sistema}: es el subconjunto de estados del sistema relacionado con la seguridad y protección del mismo.
+	\item \textbf{Sujetos}: entidades (usuarios, grupos, roles y procesos) que modifican los objetos y, en consecuencia, cambian el estado del sistema.
+	\item \textbf{Objetos}: entidades que son relevantes para el estado de protección del sistema, que deben ser protegidas. Por ejemplo: memoria, archivos, datos, directorios, programas, usuarios, etc.
+	\item \textbf{Permisos}: acciones autorizadas que un sujeto puede realizar sobre un objeto.
+	\item \textbf{Solicitud de acceso}: es una acción en la que un sujeto le pide al sistema acceso a un objeto.
+\end{itemize}
+
+\subsubsection{Monitor de referencia}
+Es un mecanismo encargado de mediar cuando los sujetos intentan realizar operaciones sobre los objetos en cualquier política de acceso.
+\ig{0.5}{U2_monitorReferencia.png}
+
+Los monitores de referencia cumplen las siguientes propiedades:
+\begin{itemize}
+	\item Intermediación obligatoria: el MR debe intervenir en \textbf{todos} los accesos.
+	\item Aislamiento: tanto el MR como sus datos deben ser incorruptibles y seguros.
+	\item Verificabilidades: debe ser demostrable que su funcionamiento es correcto.
+\end{itemize}
+
+
+\subsubsection{Matriz de control de acceso}
+Es un modelo conceptual que describe, de manera precisa, el estado de protección del sistema.
+
+Suele concebirse como una matriz que representa los permisos que tienen los sujetos (usuarios o procesos) sobre los distintos objetos. En las filas se ubican los sujetos, mientras que en las columnas se ubican los objetos+sujetos. En la celda ${i,j}$ se ubican los permisos que el sujeto $i$ tiene sobre el objeto o sujeto $j$. Definimos \textbf{permisos} como ``derechos de acceso a un recurso que se asignan a usuarios individuales o a grupos de usuarios''.
+\ig{0.6}{U2_matrizControlAcceso.png}
+
+Los permisos de la celda pueden ser:
+\begin{itemize}
+	\item r = read.
+	\item w = write.
+	\item x = execute.
+	\item a = append.
+	\item o = own.
+\end{itemize}
+
+
+~\newline
+
+Ejemplo:
+\ig{0.5}{U2_ejemploMAC.png}
+
+En la realidad, este modelo no es implementable en forma directa como matriz, porque el tamaño de esa matriz sería inmanejable. Se implementa con listas, en dos formas:
+
+\begin{itemize}
+	\item Lista de control de acceso.
+	\item Lista de capacidades.
+\end{itemize}
+
+\subsubsubsection{Lista de control de acceso}
+Para cada objeto, tengo una lista de sujetos que indica los permisos que posee cada sujeto sobre el objeto. Es como almacenar la matriz por columnas
+
+Ej: se usa normalmente para \emph{filesystems}, puesto que dado un objeto, es muy fácil ver qué usuarios tienen pemisos sobre él. Además, es muy fácil revocar los permisos del objeto, reemplazándolo por una lista vacía. Sin embargo, no es trivial ver todos los objetos a los que puede acceder un sujeto.
+
+
+
+\subsubsubsection{Lista de capacidades}
+Para cada sujeto, tengo una lista de objetos que indica los permisos que posee ese sujeto para cada objeto. Es como almacenar la matriz por filas.
+
+Si bien es más fácil chequear todos los objetos a los que puede acceder un sujeto dado (así como revocar sus permisos), es más complicado, dado un obeto, responder quiénes tienen permisos sobre él.
+
+\subsection{Control de acceso}
+El objetivo de los controles de acceso es poder controlar quién y cómo accede al sistema y sus recursos. Esto separa las estrategias de control de acceso en dos ramas:
+\begin{itemize}
+	\item Control de acceso al sistema: su objetivo es permitir el acceso al sistema sólo a aquellos usuarios que están autorizados.
+	\item Control de acceso a los recursos: establece qué usuarios pueden acceder a qué recursos y cómo. Los recursos sólo deben poder ser accedidos por usuarios autorizados con permisos explícitos y las acciones que estos realizan deben ser las permitidas.
+\end{itemize}
+
+
+En general las estrategias para control de acceso se clasifican en:
+\begin{itemize}
+	\item Control de acceso discrecional (\texttt{DAC}).
+	\item Control de acceso mandatorio (\texttt{MAC}).
+	\item Control de acceso basado en roles (\texttt{RBAC}).
+\end{itemize}
+
+
+\subsubsection{Control de acceso discrecional}
+Es una política en la cual el sujeto que define los permisos sobre un recurso es el dueño del recurso. Se dice que es \emph{discrecional}, porque queda a discreción del dueño los permisos de un objeto.
+
+Para este control de acceso se definen conceptos claves tales como:
+\begin{itemize}
+	\item Propiedad: cada objeto en el sistema debe tener un dueño. Lo normal es que el dueño sea quien crea el recurso.
+	\item Permisos: derechos de acceso que el dueño de un recurso asigna a usuarios individuales o a grupos de usuarios.
+\end{itemize}
+
+\subsubsubsection{Ventajas y Desventajas} ~\newline
+
+\partir{0.5}{0.5}{\underline{Ventajas}:
+\begin{itemize}
+	\item Es muy flexible y versátil.
+	\item Fácilmente puedo descentralizar el sistema de permisos.
+\end{itemize}
+
+\vspace{1.6cm}
+}{\underline{Desvenajas}:
+\begin{itemize}
+	\item Es peligroso: por error o impericia un usuario puede estar otorgando permisos incorrectos a otro sin siquiera saberlo.
+	\item Es obligatorio el concepto de ``dueño'' o ``propietario'' de un recurso.
+	\item También hay discrecionalidad para la revocación de derechos.
+\end{itemize}
+}
+
+En general existe un usuario privilegiado (\emph{root}) con la capacidad especial de adueñarse de cualquier recurso.
+
+
+Además existen atributos extendidos, como \emph{chattr} que permite modificar atributos extendidos tales como \emph{append only}, \emph{immutable}, etc.
+
+
+\subsubsection{Control de acceso mandatorio}
+Es una política en la cual el acceso a un recurso es determinado por el sistema y no por el dueño del recurso. Busca evitar que el usuario no pueda modificar los permisos que el sistema le otorgó. Para eso, se basa en clasificar a los sujetos y objetos en base a \textbf{niveles de seguridad}. Se definen restricciones muy fuertes sólo como moverse de un nivel a otro.
+
+Windows implementa políticas de control de acceso discrecional con el \texttt{Integrity Level} y Linux lo hace con \texttt{SELinux}.
+
+Los sistemas \underline{multiniveles} manejan múltiples niveles de clasificación entre sujetos y objetos. Se usa para sistemas gubernamentales y/o militares.
+
+\subsubsection{Control de acceso basado en roles}
+Es una política de control de acceso que surge con mucha fuerza en la década del '90. Combina aspectos de control mandatorio y discrecional, pero intentando mantener una estructura jerárquica organizacional de una empresa u organización.
+
+Básicamente consiste en la creación de \textbf{roles} para los trabajos o funciones que se realizan en la organización. Se define un rol como \emph{el conjunto de acciones y responsabilidades asociadas con una actividad en particular}. A las personas se les asignan roles que les permiten obtener los permisos para ejecutar funciones del sistema. Los permisos se asignan a los roles, no a los usuarios.
+
+Los sujetos acceden a los objetos en base a las actividades que (los sujetos) llevan a cabo en el sistema. Es decir, considerando los roles que ocupan en el sistema.
+
+
+Para implementar \texttt{RBAC} se necesitan mecanismos que permitan:
+\begin{itemize}
+	\item Identificar los roles en el sistema y asignar los sujetos a roles.
+	\item Establecer los permisos de acceso a los objetos para cada rol.
+	\item Establecer permisos a los sujetos para que puedan adoptar roles.
+\end{itemize}
+
+
+El concepto de \textbf{separación de responsabilidades} se basa en el principio de que ningún usuario tenga suficientes privilegios para usar el sistema en su propio beneficio. Se debe poder definir dentro del modelo restricciones relacionadas con prevenir que un usuario legítimo en forma maliciosa pueda hacer abuso del sistema. La separación de reponsabilidades se puede implementar estática o dinámicamente. En su implementación estática se definen los roles \emph{excluyentes} para un mismo usuario. Los roles excluyentes aseguran que un usuario no pueda realizar una acción maliciosa obteniendo permisos de dos roles al mismo tiempo (por más que tenga permisos para obtener ambos). En su versión dinámica se realiza el control al momento de acceso.
+
+El concepto de \textbf{menor privilegio} si una tarea no va a ser ejecutada por un usuario, entonces su rol no debe tener los permisos para hacerla. De esta manera se minimizan riesgos de seguridad
+
+
+Algunas aplicaciones que implementan \texttt{RBAC}:
+\begin{itemize}
+	\item Sun Solaris
+	\item Microsoft Active Directory
+	\item Base de datos Oracle
+	\item Base de Datos MS Sql Server
+\end{itemize}
+
+
+\subsubsubsection{Ventajas y Desventajas} ~\newline
+
+\partir{0.5}{0.5}{
+\underline{Ventajas}:
+\begin{itemize}
+	\item Administración de autorizaciones.
+	\item Facilidad de cambio de permisos cuando cambia un rol.
+	\item Jerarquía de roles (meter roles adentro de otros y herencia de permisos).
+	\item Menor privilegio.
+	\item Separación de responsabilidades.
+\end{itemize}
+}{
+\underline{Desventajas}:
+\begin{itemize}
+	\item Es difícil la tarea de establecer los roles y definir sus alcances.
+\end{itemize}
+
+\vspace{3cm}
+}
+
+\subsection{Políticas de seguridad}
+Formalmente, podríamos considerar un sistema como un autómata finito con funciones que permiten cambiar de un estado a otro. En este contexto, una \textbf{política de seguridad} es una declaración que particiona el conjunto de estados en:
+
+\begin{itemize}
+	\item Autorizados / seguros: estados en los que el sistema puede entrar.
+	\item No autorizados / no seguros: estados en los que, si el sistema entra hay una violación de seguridad.
+\end{itemize}
+
+Un sistema se considera \textbf{seguro} si comienza en un estado autorizado y que, si el sistema está en un estado seguro, toda transición lo llevará a otro estado seguro.
+
+Existen distintos tipos de políticas de seguridad. En general se las categorizan en:
+
+\begin{itemize}
+	\item Políticas de confidencialidad.
+	\item Políticas de integridad.
+\end{itemize}
+
+
+\subsubsection{Política de confidencialidad: Modelo Bell-Lapadula}
+Es una política de confidencialidad cuyo objetivo es prevenir el acceso no autorizado a la información. No se considera un objetivo primario el evitar las modificaciones no autorizadas. Fue concebida en los '70-'80, principalmente con fines militares. Controla el flujo de la información combinando técnicas de control de acceso mandatorio y discrecional.
+
+Este modelo define niveles de clasificación de seguridad ordenados:
+\begin{itemize}
+	\item Alto secreto.
+	\item Secreto.
+	\item Confidencial.
+	\item No clasificada.
+\end{itemize}
+
+Para establecer los permisos de un sujeto sobre un objeto, se definen \textbf{habilitaciones} de seguridad para los \textbf{sujetos} ($L(s)$) y \textbf{clasificaciones} para los \textbf{objetos} ($L(o)$).
+
+Ante un requerimiento, el sistema lo admite o rechaza considerando las habilitaciones y clasificaciones involucradas. Para eso se aplican dos principios:
+
+\subsubsubsection{Read down}
+El sujeto $s$ puede leer el objeto $o$ sii $L(o) \leq L(s)$. Coloquialmente, \textbf{un sujeto puede leer todo objeto que esté en su nivel o menos}.
+
+\subsubsubsection{Write up}
+El sujeto $s$ puede escribir el objeto $o$ sii $L(o) \geq L(s)$. Coloquialmente, \textbf{un sujeto puede escribir todo objeto que esté en su nivel o más}.
+
+La idea detrás de este principio es evitar que un usuario le filtre información confidencial a un sujeto de menos prioridad escribiéndo esa información con menos prioridad.
+
+~\newline
+Ambos principios son aplicables \textbf{si además el sujeto $s$ tiene permiso \underline{discrecional} para escribir el objeto $o$}.
+
+Además se expanden estos conceptos agregando \textbf{categorías}, que agrupan información relacionada entre si: representan distintas áreas de información dentro de un mismo nivel y no responden a un esquema jerárquico. Con esto se define el \textbf{nivel de seguridad} como la tupla \emph{(habilitación, conjunto de categorías)}.
+
+Se define la \textbf{dominancia} de la siguiente forma: $(A,C) dom (A',C') sii A'\leq A$ y $C' \subseteq C$.
+
+Luego, podemos definir los principios de \textbf{read down} y \textbf{write up} como
+\begin{itemize}
+	\item El sujeto $s$ puede leer el objeto $o$ sii $L(s) dom L(o)$ y $s$ tiene permiso para leer $o$.
+	\item El sujeto $s$ puede escribir el objeto $o$ sii $L(o) dom L(s)$ y $s$ tiene permiso para escribir $o$.
+\end{itemize}
+
+
+\subsection{Política de integridad}
+Las políticas de integridad tienen como principal objetivo preservar los datos y su integridad. Es importante identificar las maneras autorizadas en las cuales la información puede ser alterada y cuales son las entidades autorizadas para alterarlas.
+
+Sus principios de operación consisten en:
+\begin{itemize}
+	\item Separación de tareas.
+	\item Separación de funciones.
+	\item Auditabilidad.
+\end{itemize}
+
+\subsubsection{Modelo BIBA}
+Es un modelo que implementa política de integridad. Se lo puede pensar como el inverso de \emph{Bell-Lapadula}. Cuanto más alto el nivel de integridad, más confianza en que:
+\begin{itemize}
+ 	\item Un programa ejecutará correctamente.
+ 	\item La información es correcta y/o confiable.
+ \end{itemize}
+
+ Se plantean dos principios de \textbf{read up} y \textbf{write down}:
+ \begin{itemize}
+ 	\item Un sujeto $s$ puede leer un objeto $o$ sii $i(s) \leq i(o)$.
+ 	\item Un sujeto $s$ puede leer un objeto $o$ sii $i(s) \geq i(o)$.
+ \end{itemize}
+
+
+\subsubsection{Modelo Clark-Wilson}
+Es un modelo que implementa la política de integridad y utiliza la noción de transacción: el sistema comienza en un estado inicial consistente y se realizan una serie de acciones (llamadas \emph{transacciones}) que verifican que:
+\begin{itemize}
+	\item No pueden ser interrumpidas.
+	\item Si se completan, el sistema queda en un estado consistente.
+	\item Si no se completan, el sistema vuelve al estado anterior.
+\end{itemize}
+
+\subsection{Políticas Híbridas: Pared China}
+Organiza las entidades en clases de \textbf{conflictos de interés}. Se debe controlar el acceso de los sujetos a cada clase. Se controla la escritura a todas las clases para asegurarse que la información no es pasada de una a otra violando las reglas. La pared china permite que todos vean la información \emph{esterilizada} (información pública).
+
+Se definen los siguientes conceptos:
+
+\begin{itemize}
+	\item Objetos: elementos de información relacionados con una compañía.
+	\item Company dataset ($CD$): contiene objetos relacionados con una compañía.
+	\item Clase de Conflicto de Interés ($COI$): contiene datasets de compañías que compiten entre si. Se asume que cada objeto pertenece a una sola clase de conflicto de interés.
+\end{itemize}
+
+\subsubsubsection{Condición de seguridad simple}~\newline
+El sujeto $s$ puede leer el objeto $o$ sii alguna de las siguientes condiciones se cumple:
+\begin{itemize}
+	\item Existe un objeto $o'$ tan que $s$ ha leido $o'$ y CD($o'$) = CD($o$).
+
+	(Es decir, $s$ leyó previamente algún dato en el dataset de la compañía).
+	\item Para todo $o'\in O$ tal que $s$ ya leyó $o'$, entonces $COI(o')\neq COI(o)$.
+
+	(Es decir, $s$ no leyó ningún objeto de algún dataset de la compañía en la misma clase de conflicto de interés).
+\end{itemize}
+
+\subsubsection{Comparación con Bell-LaPadula}
+\begin{itemize}
+	\item Bell-LaPadula no puede llevar un histórico de cambios en el tiempo.
+	\item Armando se enferma, Nancy debe reemplazarlo: Pared China permite determinar si Nancy puede hacerlo, mientras que Bell-LaPadula no puede decir nada al respecto.
+	\item Las restricciones de acceso cambian por el tiempo: en Pared china, inicialmente todos los sujetos pueden leer cualquier objeto y va cambiando, mientras que Bell-LaPadula es estático.
+	\item En pared china no se puede borrar a todos los sujetos de todas las categorías porque viola la condición de seguridad simple.
+\end{itemize}
+
+\subsection{ORCON}
+Es un método que intenta resolver el problema de controlar la diseminación de los documentos generados dentro de una organización. Se quiere poder distribuir la información a quien quiera pero garantizar que esa persona no va a poder distribuirla.
+
+
+\subsection{Windows Mandatory Integrity Control}
+Es un control de acceso mandatorio implementado a partir de Windows Vista, basado en el modelo Biba de control de integridad. Define 4 niveles de integridad
+\begin{itemize}
+	\item Low.
+	\item Medium.
+	\item High.
+	\item System.
+\end{itemize}
+
+Todos los archivos, carpetas, usuarios y procesos tienen niveles de integridad. El nivel medio es el defecto. Un sujeto no puede darle a un objeto un nivel de integridad más alto que el suyo.
+
+
+\subsection{Covert Channel}
+Un \textbf{covert channel} (o canal secreto) es un mecanismo de comunicación que no fue diseñado para ser utilizado con ese fin. Un ejemplo de esto es utilizar una carpeta (\emph{/tmp}) donde cualquiera puede escribir. Se podría definir un protocolo mediante el cual cada cierto tiempo creo o no un archivo. No puedo ver el contenido del archivo, pero crear y borrar un archivo puede encodear un mensaje binario.
+
+\subsection{Side Channel}
+Un \textbf{side channel} es un ataque basado en información obtenida de la implementación del algoritmo criptográfico y no basada en una debilidad del algoritmo en si.
+
+Hay numerosos tipos de ataques side channel:
+\begin{itemize}
+	\item Tiempo: cuánto tardan ciertos cómputos.
+	\item Consumo eléctrico: basados en diferencias de consumo del hardware dependiendo de la operación realizada.
+	\item Electromagnéticos: basados en información fugada como radiación.
+	\item Acústico: basados en sonidos emitidos durante el cómputo.
+\end{itemize}
+
+\newpage
+
+
+\input{Unidad3}
+\newpage
+
+\input{Unidad4}
+\newpage
+
+\input{Unidad5}
+\newpage
+
+% \input{unidad6}
+% \newpage
+
+
+
+
+
+\section{Bibliografía}
+\begin{itemize}
+	\item Diapositivas de clase de Rodolfo Baader.
+	\item Apuntes de Julián Sackmann.
+	\item Wikipedia.
+\end{itemize}
+\end{document}

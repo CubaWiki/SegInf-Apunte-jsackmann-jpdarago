@@ -1,0 +1,789 @@
+\section{Unidad 3: Criptografía}
+Definiciones:
+\begin{itemize}
+	\item \textbf{Criptografía}: es una rama de la matemática que busca cifrar y descrifrar información utilizando métodos y técnicas que permitan el intercambio de mensajes de manera que sólo puedan ser leídos por las personas a quienes van dirigidos. Su objetivo es mantener la información cifrada secreta.
+	\item \textbf{Criptoanálisis}: es el estudio de los métodos que se se utilizan para quebrar textos cifrados con objeto de recuperar la información original en ausencia de la clave.
+	\item \textbf{Criptología}: es la ciencia que estudia las técnicas criptográficas y de criptoanálisis.
+	\item \textbf{Cifra}: método o técnica que protege a un mensaje al aplicar un algoritmo criptográfico.
+	\item \textbf{Esteganofrafía}: es la comunicación secreta lograda mediante ocultación de \emph{la existencia} de un mensaje.
+	\item \textbf{Atacante}: un sujeto cuya meta es quberar un criptosistema.
+\end{itemize}
+
+\subsection{Criptosistema}
+Se puede definir un \textbf{criptosistema} como una tupla $(E, D, M, K, C)$ donde:
+\begin{itemize}
+	\item $M$ es el conjunto de textos en claro.
+	\item $K$ es el conjunto de claves.
+	\item $C$ es el conjunto de textos cifrados.
+	\item $E$ es el conjunto de funciones de cifrado ($e:M\times K \rightarrow C$).
+	\item $D$ es el conjunto de funciones de descifrado ($d:C\times K \rightarrow M$).
+\end{itemize}
+
+\subsection{Tipos de ataque}
+\begin{itemize}
+	\item Fuerza bruta.
+	\item Sólo texto cifrado: el atacante sólo ve el texto cifrado.
+	\item Texto en claro conocido: el atacante conoce el texto cifrado y el claro, pero no lo puede elegir.
+	\item Texto en claro elegido: el atacante conoce el texto cifrado y el claro, y además lo puede elegir.
+	\item Ataques matemáticos: basadaos en análisis matemáticos de los algoritmos.
+	\item Ataques a la implementación: en muchos casos hay algoritmos que si bien son ``correctos'', su implementación.
+	\item Ataques estadísticos: se basan en hacer suposiciones sobre la disposición de las letras (\emph{monogramas}), pares de letras (\emph{digramas}), etc. Examinar el texto cifrado y relacionar sus propiedades con las suposiciones realizadas. 
+\end{itemize}
+
+\subsection{Criptografía clásica}
+En la criptografía clase el emisor y receptor comparten una clave.
+
+Hay tres tipos de criptografía clásica: \textbf{sustitución}, \textbf{transposición} y \textbf{combinados}.
+
+\underline{Categorización}:
+\ig{0.4}{U3_criptoClasica.png}
+
+\subsubsubsection{Cifra por sustitución}
+Consiste en cambiar caracteres del texto en claro para producir el texto cifrado.
+
+La cifra por sustitución puede ser:
+\begin{itemize}
+	\item Monoalfabética: a una misma letra del mensaje en claro le corresponde siempre la misma letra del mensaje cifrado.
+	\item Polialfabética: a una misma letra del mensaje en claro le pueden corresponder distintas letras en el mensaje cifrado.
+\end{itemize}
+
+\underline{Ejemplo}: cifra de césar: es una sustitución monoalfabética monograma. Consiste en reemplazar cada letra del mensaje original por la letra que se encuentra tres lugares adelante en el alfabeto.
+
+\subsubsubsection{Cifra por transposición}
+Consiste en reorganizar los caracteres del texto en claro para producir el texto cifrado. En muchos casos en sigue una pauta simétrica: escribir por filas y leer por columnas o cosas así. 
+
+\underline{Ejemplo}: Cifra de escítala.
+
+\subsubsection{Análisis de frecuencia}
+Es un tipo de análisis estadísico que se basa en el análisis de la frecuencia de aparición de los símbolos del texto cifrado y su intento de correlación con los símbolos del lenguaje en el cual está escrito el mensaje. Se buscan los caracteres más frecuentes en el criptograma y se los asocia a las letras de mayor aparición en el idioma original. En general se prueban distintas alternativas hasta alcanzar un texto coherente.
+
+\subsubsection{Cifra de Vigenère}
+Es una sustitución polialfabética periódica lineal en la que se usa una frase para establecer el corrimiento. El período es igual a la longitud de la clave. Durante años se consideró ``indescifrable'', pero en 1863 se inventó el \textbf{Ataque de Kasiski}. Consiste en:
+\begin{itemize}
+	\item Buscar cadenas repetidas.
+	\item Buscar el período de la clave obteniendo el $MCD$ (máximo común divisor) entre las posiciones de todas las cadenas repetidas.
+	\item Descomponer el problema en $N$ sistemas monoalfabíticos (donde $N$ es el tamaño de la clave).
+	\item Abordar cada sistema monoalfabético por medio del análisis de frecuencias.
+\end{itemize}
+
+Se define el \textbf{índice de coincidencias} como la probabilidad de que dos letras de un texto cifrado elegidas al azar sean la misma.
+
+\underline{Ejemplo}:
+\ig{0.4}{U3_Vigenere.png}
+
+\subsubsection{One-time pad}
+Es una clave de Vigenère con una clave aleatoria tan larga como el mensaje en claro. Es un sistema criptográfico perfectamente seguro porque dado un texto cifrado, todos los textos en claro son equiprobables. 
+
+\underline{Ejemplo}: El texto cifrado \texttt{DXQR}, puede corresponder al texto en claro \texttt{DOIT} (cifrado con la clave \texttt{AJIY}) y al texto en claro \texttt{DONT} (cifrado con la clave \texttt{AJDY}) y a cualquier otra combinación de 4 letras. 
+
+Sin embargo, si tiene riesgos que pueden redundar en ataques:
+\begin{itemize}
+	\item Las claves deben ser aleatorias, de no serlo se puede atacar tratando de regenerar la clave.
+	\item Las claves se deben usar una sola vez.
+\end{itemize}
+
+
+\subsection{Criptografía moderna}
+
+\ig{0.4}{U3_criptoModerna.png}
+
+Se definen los principios de Kerckhoffs (1883):
+\begin{itemize}
+	\item El sistema debe ser en la práctica imposible de cripoanalizar.
+	\item La seguridad de un sistema criptográfico debe depender sólo de que la clave sea secreta y no de que el algoritmo de cifrado sea secreto.
+	\item Método de elección de claves fácil de recordar.
+	\item Transmisión del texto cifrado por telégrafo.
+	\item La máquina de cifrar debe ser portable.
+	\item No debe existir una larga lista de reglas de uso.
+\end{itemize}
+
+Shannon (1948) define \textbf{información} como el conjunto de datos o mensajes inteligibles creados con un lenguaje de representación. Ante varios mensajes posibles, aquel que tenga una menor probabilidad de aparición será el que contenga una mayor cantidad de información.
+
+Un sistema criptográfico es \textbf{perfectamente seguro} si el texto cifrado no da ninguna información adicional sobre el texto en claro. Es decir, dado un texto cifrado $C$, cualquier posible texto plano es igualmente probable con respecto a $C$. Una propiedad de los sistemas perfectamente seguros es que la longitud de las claves es mayor o igual que la de los mensajes.
+
+Un sistema es \textbf{incondicionalmente seguro} cuando es seguro frente a ataques con capacidad de cálculo ilimitada.
+
+Un sistema es \textbf{computacionalmente seguro} cuando es seguro frente a ataques con capacidad de cálculo limitada.
+
+~\newline
+
+Para mejorar las operaciones de cifra, Shannon propone dos técnicas: 
+\begin{itemize}
+	\item \textbf{Difusión}: es la transformación del texto claro con el objeto de dispersar las propiedades estadísticas del lenguaje sobre el criptograma. Se logra con \emph{transposiciones}.
+	\item \textbf{Confusión}: es la transformación del texto claro con el objeto de mezclar los elementos de éste, aumentando la complejidad de la dependencia funcional entre la clave y el criptograma. Se obtiene mediante \emph{sustituciones}.
+\end{itemize}
+
+\subsection{Criptografía simétrica}
+También conocidos como criptografía de clave secreta o clave privada. La clave utilizada en la operación de cifrado es la misma que se utilizada para el descifrado.
+
+Existen dos mecanismos básicos: \textbf{de flujo} y \textbf{de bloque}.
+
+Sea $E$ una función de cifrado.
+\begin{itemize}
+	\item $E_k(b)$ cifrado del mensaje $b$ con la clave $k$.
+	\item $m = b_1b_2,\hdots$, donde cada $b_i$ es de longitud fija.
+\end{itemize}
+
+
+\subsubsection{Cifrado de flujo}
+Se genera una clave de la misma longitud que el mensaje y se va cifrando cada parte del mensaje con esa clave. Si $k=k_1,k_2,\hdots$, entonces
+\begin{center}
+	$E_k(m) = E_{k_1}(b_1),E_{k_2}(b_2),\hdots$
+\end{center}
+
+Si la clave se repite (tiene un período) $k_1,k_2,\hdots$, el cifrador se dice \textbf{periódico} y la longitud de su periodo es su ciclo.
+
+Utiliza los siguientes conceptos:
+\begin{itemize}
+	\item El espacio de claves es mayor o igual que el espacio de los mensjes.
+	\item Las claves son aleatorias.
+	\item La secuencia de clave se usa sólo una vez.
+\end{itemize}
+
+La idea es que se usan generadores pseudoaleatorios con un algoritmo determinístico a partir de una semilla de $n$ bits, pudiendo generar secuencias con período de hasta $2^n$. Como el generador es determinístico, alcanza con transmitir la semilla. 
+
+La secuencia cifrante debe cumplir:
+\begin{itemize}
+	\item Tener un período muy alto.
+	\item Tener propiedades psuedoaleatorios.
+\end{itemize}
+
+Existen dos mecanismos de operación de las secuencias cifrantes:
+\begin{itemize}
+	\item Sincrónicos: el emisor y el receptor deben sincornizarse previamente a la transmisión. La pérdida de 1 bit en el flujo de datos puede inutilizar el resto de la transmisión.
+	\item Auto-sincrónicos: se utiliza parte de la información del texto cifrado para renovar la clase de la secuencia cifrante.
+\end{itemize}
+
+
+
+Problema de los algoritmos de cifrado de flujo: si un atacante obtiene el texto plano y el cifrado, es muy fácil obtener la clave.
+ 
+\subsubsection{Cifrado en bloque}
+El mensaje se divide en bloques de longitud fija y se aplica el algoritmo de cifrado a cada bloque en forma independiente con la misma clave.
+
+\begin{center}
+	$E_k(m) = E_k(b_1)E_k(b_2)$
+\end{center}
+
+Existen distintos modos de operación que dependen de cómo se mezcla la clave con el texto en claro:
+\begin{itemize}
+	\item \texttt{EBC} (\emph{Electronic CodeBook}): el texto se divide en bloques y cada bloque es cifrado en forma independiente utilizando la clave. Tiene el problema de que el mensaje puede quedar entendible (por ejemplo, en el caso de una imagen) porque mantiene mucha relación con el texto original.
+
+	Problema: si se cuánto mide el bloque, me da mucha información, porque el mismo cypher es el mismo plain.
+	Ventaja: si tengo un error en un bloque, el error no se propaga.
+
+	\item \texttt{CBC} (\emph{Cipher Block Chaining}): el texto se divide en bloques y cada bloque es mezclado con la cifra del bloque previo, luego es cifrado utilizando la clave. 
+
+	Ventaja: Por más que el plaintext sea el mismo, el cyphertext va a ser distinto.
+
+	\item \texttt{CFB} (\emph{Cipher Feedback}): opera como un cifrador de flujo auto-sincrónico, generando la clave de cifrado sobre la base de la clave y el bloque cifrado previo, y luego cifrando el mensaje con una operación \texttt{XOR}.
+	\item \texttt{OFB} (\emph{Output Feedback}): opera en forma similar al CFB, pero sin incluir el texto claro en el siguiente paso de realimentación. Es similar a un cifrador de flujo sincrónico.
+\end{itemize}
+
+\subsection{Padding}
+Al dividir el texto original en bloques de longitud fija, algunos modos de cifrado requieren que se rellene el último bloque antes de realizar la operación. Este texto de relleno, llamado \textbf{padding}, debe ser quitado durante la operación de descifrado.
+
+Para estandarizar el padding, se define estándar \texttt{PKCS\#5}: el último bloque se completa con $N$ bytes con valor $N$, si es múltiplo se completa con un bloque completo de padding.
+
+\ig{0.4}{U3_PKS5.png}
+
+El problema del \texttt{PKCS\#5} es que se sabe cómo es el padding. Ergo, se tiene una porción de texto plano y una porción de texto cifrado, lo que da información. Esto generó un ataque conocido como \textbf{Padding Oracle Attack}. No sacaba la clave pero lograba inyectar texto ``coherente'' encriptado.
+
+\subsection{Números aleatorios}
+La generación de números aleatorios es muy importante para la criptografía. Sin embargo, es muy difícil utilizar fuentes aleatorias verdaderas (como ruido físico). Es por esto que se suelen utilizar fuentes pseudo-aleatorias (algoritmos determinísticos que estadísticamente parecen aleatorios), inicializadas por una semilla. 
+
+\subsubsection{LFSR: Linear Feedback Shift Register}
+Registros de desplazamiento con retroalimentación lineal. Un $n$-stage LFSR consiste en:
+\begin{itemize}
+	\item Un registro de $n$ bits $r = r_0,\hdots,r_{n-1}$.
+	\item Una secuencia de $n$ bits $t = t_0,\hdots,t_{n-1}$.
+\end{itemize}
+
+\partir{0.5}{0.5}{\underline{Ventajas}:
+\begin{itemize}
+	\item Muy rápido.
+	\item Se conoce cómo construirlo para que el período sea máximo ($2^{n+1}$).
+\end{itemize}
+}{\underline{Desvenajas}:
+\begin{itemize}
+	\item La transformación es lineal. Si obtengo el mensaje en claro y el cifrado es fácil obtener la clave. Para disimular esta linealidad se puede tomar como input como parte del mensaje en claro.
+\end{itemize}
+}
+
+\subsubsection{NLFSR: Non Linear Feedback Shift Register}
+Es similar al \texttt{LFSR}, pero utiliza una función de reemplazo de bits más general. 
+
+En general no se los suele utilizar, sino que se usa \emph{output feedback mode}.
+
+\partir{0.5}{0.5}{\underline{Ventajas}:
+\begin{itemize}
+	\item Es más difícil adivinar la clave aún teniendo mensaje en claro y cifrado.
+\end{itemize}
+}{\underline{Desvenajas}:
+\begin{itemize}
+	\item No se conocen formas de garantizar que el período es máximo (y es difícil lograrlo).
+\end{itemize}
+}
+
+
+
+\subsection{RC4}
+Es un cifrador de flujo utilizado en \texttt{TLS/SSL} y \texttt{WEP}. Opera de modo sincrónico, a nivel de byte (no de bit). Es muy utilizado por su notable eficiencia en implementaciones de software.
+
+\texttt{RC4} genera un flujo pseudoaleatorio de bytes (un \emph{keystream}) que, para cifrarlo, se combina con el texto plano utilizando la función \texttt{XOR}. La fase de descrifrar se realiza del mismo modo. 
+
+Para generar el \emph{keystream}, el algoritmo utiliza un estado interno secreto y dos funciones:
+\begin{itemize}
+	\item Algoritmo de programación de claves (\texttt{KSA}).
+	\item Algoritmo de generación pseudoaleatoria (\texttt{PRGA}).
+\end{itemize}
+
+\subsection{DES: Data Encryption Standard}
+Es un cifrador por bloques que tiene las siguientes características:
+\begin{itemize}
+ 	\item Utiliza bloques de 64 bits (8 bytes).
+ 	\item La clave es de 7 bytes + 1 de paridad.
+ 	\item Los bloques cifrados son de 64 bits (8 bytes).
+ 	\item Su unidad básica es el bit.
+ 	\item Utiliza \emph{sustituciones} y \emph{permutaciones} sobre los bits.
+ \end{itemize}
+
+ El algoritmo consiste en 16 iteraciones; en cada una utiliza una clave generada a partir de la clave suministrada originalmente. En cada iteración:
+ \begin{enumerate}
+ 	\item Se divide el bloque en dos mitades de 32.
+ 	\item Se pasa una de las mitades por una función $F$ de \emph{Feistel}. Esta función consta de 4 pasos:
+ 	\begin{itemize}
+ 		\item Expansión.
+ 		\item Mezcla.
+ 		\item Sustitución.
+ 		\item Permutaión.
+ 	\end{itemize}
+ 	\item Se mezclan ambas mitades con \texttt{XOR}.
+ 	\item Se rotan ambas mitades.
+ \end{enumerate}
+
+\subsubsection{Ataques}
+DES tiene muchas propiedades indeseadas:
+\begin{itemize}
+	\item Tiene 4 claves débiles (que son su propia inversa).
+	\item Tiene 6 pares de claves semi-débiles 
+	\item Propiedad complementaria: $DES_k(m) = c \Rightarrow DES_{k'}(m') = c'$.
+	\item Las S-Box (parte de la generación de claves) tienen propiedades irregulares (distribución de números no aleatoria y dependencias no deseadas).
+\end{itemize}
+
+Estas propieadedes permiten muchos ataques:
+\begin{itemize}
+	\item Fuerza bruta ($2^{56}$ intentos).
+	\item Criptoanálisis diferencial ($2^{47}$ intentos): usar pares de texto en claro elegidos y analizar cómo evolucionan a medida que se ejecutan las rondas. Se usa cuando no puedo elegir el texto.
+	\item Criptoanálisis lineal ($2^{43}$ intentos): se usa cuando puedo elegir el texto.
+\end{itemize}
+
+\subsubsection{Ventajas y Desventajas}
+\partir{0.5}{0.5}{\underline{Ventajas}:
+\begin{itemize}
+	\item Rápido.
+\end{itemize}
+}{\underline{Desvenajas}:
+\begin{itemize}
+	\item Débil. 
+\end{itemize}
+}
+
+\subsubsection{Modos de operación}
+\texttt{DES} tiene distintos modos de operación:
+\begin{itemize}
+	\item \texttt{ECB} (\emph{Electronic Code Block}): se cifra cada bloque de forma independiente.
+	\item \texttt{CBC} (\emph{Cypher Block Chain}): \texttt{XOR} de cada bloque con el cifrado anterior.
+	\item \texttt{EDE} (\emph{Encrypt-Decrypt-Encrypt}): se usan dos claves ($k$ y $k'$), de tamaño 112 bits y se realiza la operación:
+	\begin{center}
+		$c = DES_k(DES^{-1}_{k'}(DES_{k}(m)))$
+	\end{center}
+	\item TripleDES (\emph{Encrypt-Encrypt-Encrypt}): se usan tres claves ($k$, $k'$ y $k''$) de tamaño 168 y se realiza la operación:
+	\begin{center}
+		$c = DES_k(DES_{k'}(DES_{k''}(m)))$
+	\end{center}
+	(problema: es lento)
+\end{itemize}
+
+\subsection{AES: Advanced Encryption Standard}
+Es un cifrador de bloque y por producto. Opera con bloques y claves de longiud variable, que pueden ser especificadas independientemente a 128, 192 o 256 bits (las 9 combinaciones son posibles), siendo fácilmente extendible a múltiplos de 32 bits.
+
+\subsubsection{Ventajas y Desventajas}
+\partir{0.5}{0.5}{\underline{Ventajas}:
+\begin{itemize}
+	\item Implementación eficiente en software y hardware.
+	\item Extensible.
+	\item Seguro
+\end{itemize}
+}{\underline{Desvenajas}:
+\begin{itemize}
+	\item Distribución de clave.
+	\item Complejidad en la gestión de la clave.
+\end{itemize}
+}
+
+\subsection{Criptografía asimétrica}
+
+Se le atribuye a Diffie-Hellman. Conceptualmente, la criptografía asimétrica toma como principio el tener dos claves: una \textbf{pública} (disponible para todos) y una \textbf{privada} (sólo para el individuo). La clave de cifrado y la de descifrado no son la misma.
+
+El uso de criptografía asimétrica permite:
+\begin{itemize}
+	\item \textbf{Confidencialidad}: cifrar usando la clave pública del destinatario, que lo descifra con su clave privada.
+	\item \textbf{Integridad/Autenticación}: se cifra usando la clave privada del emisor, con lo que sólo se descifra con su clave pública.
+\end{itemize}
+
+Los sitemas de criptografía asimétrica deben cumplir las siguientes propiedades:
+\begin{itemize}
+	\item Dada la clave apropiada debe ser computacionalmente fácil cifrar y descifrar un mensaje.
+	\item Debe ser computacionalmente imposible derivar la clave privada a partir de la clave pública.
+	\item Debe ser computacionalmente imposible determinar la clave privada a partir de un ataque de texto en claro elegido.
+\end{itemize}
+
+\subsubsection{Diffie-Hellman}
+El algoritmo de Diffie-Hellman permite a dos sujetos acordar una clave de sesión en un medio inseguro, sin que otros sujetos que estén oyendo en el medio puedan saber cuál es. Se basa en operaciones matemáticas de exponenciación y en el problema de obtener el logaritmo discreto.
+
+Su principal problema es que no provee autenticación: es vulnerable a un ataque \emph{man in the middle}.
+
+~\newline
+
+El algoritmo es el siguiente:
+\begin{enumerate}
+	\item Alice y Bob eligen dos números $p$ y $g$ tales que:
+	\begin{itemize}
+		\item $p$ es primo.
+		\item $2\leq g\leq g-1$ 
+	\end{itemize}
+	\item Alice elige un entero $a$ y le envía a Bob el resultado de $g^a\ mod\ p$.
+	\item Bob elige un entero $b$ y le envía a Bob el resultado de $g^b\ mod\ p$.
+	\item Alice calcula $k = (g^b\ mod\ p)^a\ mod\ p$.
+	\item Bob calcula $k’ = (g^a\ mod\ p)^b\ mod\ p$.
+\end{enumerate}
+
+Al final resulta que
+\begin{center}
+	\large{$\displaystyle k = k' = g^{ab}\ mod\ p$}
+\end{center}
+
+\subsubsection{RSA}
+Es un algoritmo creado en 1977 por Ron \textbf{\large{R}}ivest, Adi \textbf{\large{S}}hamir y Len \textbf{\large{A}}dleman. Puede ser usado para cifrar y firmar mensajes. Se basa en el problema de la factorización de números muy grandes.
+
+\subsubsubsection{Algoritmo}
+Matemáticamente, involucra la función $\phi(n)$ que se define como el número de enteros positivos menores que $n$ que son coprimos\footnote{Un número es coprimo con $n$ si no tiene factores en común con $n$.} con $n$. Si $n=p\times q$, se puede demostrar que $\phi(n) = (p-1)(q-1)$. Usando esta propiedad, el algoritmo para obtener la clave pública y privada consiste en:
+\begin{enumerate}
+ 	\item Elegir dos primos grandes distintos $p$ y $q$ ($p\neq q$). Consideremos $n = p\times q$.
+ 	\item Elegir $e < n$ tal que $e$ es \underline{coprimo} con $\phi(n)$.
+ 	\item Calcular $d$ la solución de la ecuación: $(e\times d)\ mod\ \phi(n) = 1$.
+ \end{enumerate} 
+
+Al final se obtienen:
+\begin{center}
+	\textbf{Clave pública}: $(e, n)$\\
+	\textbf{Clave privada}: $d$
+\end{center}
+
+Una vez obtenidas las claves, para cifrar y descifrar un mensaje $m$ se lo divide en bloques de longitud menor a $n$ y se calcula:
+
+\partir{0.5}{0.5}{
+\textbf{\underline{Cifrar}}:
+\begin{center}
+	\Large{$\displaystyle c_i = m_i^e\ mod\ n$}
+\end{center}}{
+\textbf{\underline{Descifrar}}:
+\begin{center}
+	\Large{$\displaystyle m_i = c_i^e\ mod\ n$}
+\end{center}
+}
+
+\textbf{Por un tema de costos, normalmente no se usa \texttt{RSA} para encriptar mensajes, sino que se encriptan claves para algoritmos simétricos}.
+
+\subsubsubsection{Ataques}
+La seguridad de \texttt{RSA} se basa en la complejidad de factorizar números muy grandes. Hoy en día si bien existen tests de primariedad polinomial (Rabin-Miller), no se conocen algoritmos polinomiales de factorización. 
+
+Los ataques principales a \texttt{RSA} se basan en:
+\begin{itemize}
+	\item Texto cifrado elegido (firma de texto aleatorios).
+	\item Los números tienen un módulo común (exponentes diferentes coprimos).
+	\item Exponente de cifrado bajo.
+	\item Exponente de descifrado bajo.
+\end{itemize}
+
+\subsubsubsection{Ventajas y Desventajas}
+
+\partir{0.5}{0.5}{\underline{Ventajas}:
+\begin{itemize}
+	\item Provee autenticación y confidencialidad.
+	\item Muy seguro.
+	\item Claves grandes (2048 o 4096 bits).
+\end{itemize}
+}{\underline{Desvenajas}:
+\begin{itemize}
+	\item Muy lento.
+\end{itemize}
+\vspace{1.2cm}
+}
+
+\subsection{Checksum}
+Las funciones de \textbf{checksum} utilizaban para detectar errores no intencionales (por ejemplo, errores de transmisión por el medio). Algunas técnicas que se usan para checksums:
+\begin{itemize}
+	\item Bit de paridad: es un bit que indica si la cantidad de bits en los 7 bits precedentes es par o impar.
+	\item CRC: se basa en la idea de dividir polinomios y usar el resto.
+\end{itemize}
+
+\subsection{Hash}
+Las funciones de \textbf{hash} transforman un mensaje de longitud variable en una cadena de longitud fija. Estas funciones deben cumplir:
+
+\begin{enumerate}
+	\item No son reversibles.
+	\item Pueden tener colisiones.
+	\item Son rápidas de calcular.
+	\item Resistencia a preimágenes: dado un hash $z$, no es factible encontrar un documento de entrada $x$ tal que $f(x)=z$.
+	\item Resistencia a segundas preimágenes: dado un documento $x$ no es factible encontrar un $x'$ tal que $f(x)=f(x')$.
+	\item Resistencia a colisiones: no es factible encontrar dos documentos $x$ y $x'$ tal que $f(x) = f(x')$
+\end{enumerate}
+
+Si se una función cumple (4) y (5) se la llama \textbf{de una vía}. Si cumple (5) y (6) se dice que es \textbf{resistente a colisiones}.
+
+Estas funciones se construyen mediante Merkle-Damgard: \texttt{SHA-1}, \texttt{SHA-2}, \texttt{MD5}, etc.
+
+Una de las cosas que dificulta en análisis de las funciones de \texttt{hash} es el \textbf{efecto avalancha}: un cambio de 1 bit en un mensaje cambia al rededor del 50\% de los bits.
+
+\subsubsection{Buenos y malos usos}
+\partir{0.5}{0.5}{\underline{Lo correcto}:
+\begin{itemize}
+	\item Utilizar un hash cuando se puede distribuir de manera segura $H(x)$ y se desea verificar que un valor $x’$, recibido de manera insegura, es de hecho igual a $x$.
+\end{itemize}}{\underline{Lo malo}:
+\begin{itemize}
+	\item Distribuir $H(x)$ y $x$ por el mismo medio: si un atacante modifica $x$ también puede modificar $H(x)$.
+	\item Utilizar $H(x)$ como una firma: cualquiera puede calcular $H(x)$.
+\end{itemize}}
+
+\subsubsection{Length Extension Attack}
+El \textbf{length extension attack} es un ataque que permite a un atacante inyectar texto arbitrario a un hash con secreto aún sin conocer el secreto. Se basa en la propiedad de que las funciones vulerables (las que utilizan la construcción de Merkle-Damgard), cumplen la propiedad de:
+$$H(x+a) = H(x) \text{ unido con } H(a)$$
+
+Luego, si queremos transmitir un mensaje con hash con secreto y hacemos $H(secreto + msj)$, un atacante que intercepte el tráfico puede inyectar texto en el documento y obtener la firma aún sin conocer el secreto directamente. Para evitar esto, se puede:
+
+\begin{itemize}
+	\item Hacer hash doble: $H(H(secreto+msj)$.
+	\item Dejar el secreto al final: $H(msj+secreto)$ \hfill \emph{(Obs: esto tiene otro tipo de ataques)}
+	\item Usar \texttt{HMAC}.
+\end{itemize}
+
+\subsection{HMAC}
+Las funciones más comunes (\texttt{SHA-1}, \texttt{MD5}, etc), no fueron diseñadas para la autenticación, puesto que carecen de clave secreta (o, si se utiliza incorrectamente, pueden ser fácilmente atacados).
+
+La diferencia principal entre una función de hash y un \texttt{MAC} es que conocer $MAC_k(x)$ no permite computer $MAC_k(y)$ para algún otro $y$.
+
+Los \texttt{HMAC} se calculan como:
+$$HMAC_k(m) = h ((k\oplus opad) || h ((k\oplus ipad) || m ))$$
+
+donde:
+\begin{itemize}
+	\item $opad = 0x5c5c5c\hdots$
+	\item $ipad = 0x363636\hdots$
+\end{itemize}
+
+\subsection{Certificado}
+Un \textbf{certificado} es una estructura de datos que contiene:
+\begin{itemize}
+	\item La identidad del poseedor de la clave pública.
+	\item La clave pública.
+	\item Emisor del certificado.
+	\item La fecha en que se emitió.
+	\item Información adicional (ej. identidad del emisor, uso que se le puede dar a ese certificado).
+\end{itemize}
+
+Supongamos que \emph{Alice} y \emph{Bob} quieren compartir información. Para verificar su origen, ambos tienen sus pares de claves pública/privada. El problema que surge es: ¿cómo se pasan sus respectivas claves públicas? Una opción es utilizar un tercero confiable (\emph{Cathy}). Sin embargo simplemente pateamos el problema para adelante. ¿Cómo obtienen la clave pública de \emph{Cathy}? 
+
+Para solucionar este problema se plantean dos soluciones de cadenas de firmas:
+\begin{itemize}
+	\item X.509
+	\item PGP
+\end{itemize}
+
+
+\subsubsection{PGP}
+La gestión de claves en \texttt{PGP} se basa en la confianza mutua y es adecuada solamente para entornos privados o intranet.
+
+Usa el mecanismo de clave pública y privada, pero resuelve el mecanismo de confianza en base a confianza mutua: no tengo una autoridad centralizada que certifica, sino que a medida que uno se pone en contacto con más gente que usa PGP, más ``certifica'' la clave.
+
+Los datos asociados a las claves \texttt{PGP} son:
+\begin{itemize}
+	\item Versión de PGP.
+	\item Clave pública junto con el algoritmo (\texttt{RSA}, \texttt{DSA}, \texttt{DH}).
+	\item Información sobre la identidad del titular.
+	\item Firma digital del titular del certificado (auto-firma).
+	\item Período de validez.
+	\item Algoritmo simétrico de cifrado preferido.
+	\item Conjunto de firmas de terceros: (opcional)
+	\begin{itemize}
+		\item Definen nivel de confianza.
+		\item Definen nivel de validez.
+	\end{itemize}
+\end{itemize}
+
+
+\subsubsection{X.509}
+Los certificados \textbf{X.509} tienen el problema de centralización del certificado. Para solucionarlo, se usa el concepto de \textbf{autoridades certificantes}: terceras partes confiables que dan fé de la verdadi de la información inluida en los certificados que emiten. Sin embargo, tener entidades certificantes centralizadas tiene muchos problemas:
+\begin{itemize}
+	\item Muchos puntos de ataque.
+	\item Una entidad certificante de Malasia puede emitir certificados para Argentina. O para Google.
+\end{itemize}
+
+Los datos asociados son:
+\begin{itemize}
+	\item Versión de X.509 (v3).
+	\item Número de serie.
+	\item Algoritmo de firma (\texttt{SHA-1} with \texttt{RSA}).
+	\item Nombre del emisor.
+	\item Período de validez.
+	\item Nombre del titular / suscriptor.
+	\item Clave pública del titular.
+	\item Firma: hash del certificado cifrado.
+	\item Extensiones (opcional).
+\end{itemize}
+
+Cada certificado puede identificarse unívocamente con su número de seríe + su emisor.
+
+Las extensiones pueden usarse para cosas como manejar la herencia de certificación, restringir el uso del certificado o aportar mayores preciosones al uso del certificado.
+
+\ig{0.5}{U3_X509.png}
+
+
+\subsubsubsection{Validación}
+El proceso de validación de un certificado \texttt{X.509} consiste en:
+\begin{enumerate}
+	\item Obtener la clave pública del emisor.
+	\item Descifrar la firma para obtener el hash del certificado.
+	\item Recalcular el hash del certificado y compararlo con el obtenido.
+	\item Chequear el período de validez del certificado.
+	\item Chequear \texttt{CRL}s (\emph{Certificate Revocate Lists}).
+\end{enumerate}
+
+
+\subsubsection{FIPS140}
+Es un estándar para evaluar números criptográficos. Define criterios, 4 niveles y 11 categorías con requerimientos específicos:
+
+\subsubsubsection{Nivel 1}\vspace{-2em}
+\begin{itemize}
+	\item Verifica que los algoritmos de cifrado están aprobados por una oficna de EEUU.
+	\item Verifica que los algoritmos de cifrado estén bien implementados.
+	\item No especifica seguridad física.
+	\item Permite que los componentes de software o firmware se ejecuten en un sistema de propósito general utilizando un sistema operativo no evaluado.
+\end{itemize}
+
+\subsubsubsection{Nivel 2}\vspace{-2em} 
+\begin{itemize}
+	\item Especifica seguridad física: Sellos o revestimientos ``tamper-proof'' en las cubiertas removibles del módulo.
+	\item Requiere autenticación basada en roles.
+	\item Los componentes de software y firmware deben ejecutarse en un sistema operativo que haya sido evaluado en \emph{Common Criteria EAL2} o superior.
+\end{itemize}
+
+\subsubsubsection{Nivel 3}\vspace{-2em} 
+\begin{itemize}
+	\item Más restricciones físicas: suficiente para prevenir que los intrusos accedan a los parámetros críticos de seguridad del módulo criptográfico.
+	\item Autenticación basada en identidad.
+	\item Fuertes requerimientos para leer y alterar los parámetros críticos de seguridad.
+	\item Los componentes de software y firmware deben ejecutarse en un sistema operativo que haya sido evaluado en \emph{EAL3}.
+\end{itemize}
+
+\subsubsubsection{Nivel 4}\vspace{-2em} 
+\begin{itemize}
+	\item Más restricciones físicas: si se abre un módulo crítico, debe destruirse la información que contiene. Cambios en las condiciones de temperatura / presión / movimiento debe destruir la información.
+	\item Los componentes de software y firmware deben cumplir los requerimientos funcionales del nivel de seguridad 3 y deben ejecutarse en un sistema operativo que haya sido evaluado en \emph{EAL4}.
+\end{itemize}
+
+
+\subsubsection{Revocación de certificados}
+Por diversos motivos, un certificado puede ser revocado antes de su fecha de expiración:
+\begin{itemize}
+	\item Se comprometió su clave.
+	\item Cambio de la situación del titular.
+\end{itemize}
+
+La revocación de certificados plantea muchos problemas:
+\begin{itemize}
+	\item La entidad que revoca el certificado debe estar autorizada a hacerlo.
+	\item La información de revocación debe estar disponible rápidamente.
+\end{itemize}
+
+\subsubsubsection{CRL}
+Para implementar la revocación de certificados se utilizan las \texttt{CRL}: (\emph{Certificate Revocation List}). Es una lista de los certificados que se encuentran revocados. Son el equivalente a las listas de tarjetas de crédito robadas. Para evitar fraudes, sólo el emisor del certificado puede revocar el mismo. Las autoridades certificantes están obligadas a publicar permanentemente la \texttt{CRL}, que tiene un período de validez. 
+
+Las \texttt{CRL}s consisten de los siguientes campos:
+\begin{itemize}
+	\item Version.
+	\item Algoritmo de firma.
+	\item Nombre del emisor.
+	\item Fecha de emisión.
+	\item Fecha de próxima emisión.
+	\item Lista de certificados revocados:
+	\begin{itemize}
+		\item Nro de serie del certificado revocado.
+		\item Fecha de revocación.
+		\item Extensiones de revocación (motivo de revocación)
+	\end{itemize}
+	\item Extensiones de la \texttt{CRL}.
+\end{itemize}
+
+Los principales problemas de la \texttt{CRL} es que no contienen el estado actual: es muy posible que estén desactualizadas. Además, la responsabilidad de verificarlos recae en el usuario. Además, tienen muchos problemas de volúmen y distribución.
+
+Las soluciones planteadas involucran: 
+\begin{itemize}
+	\item Dividir el alcance (\emph{scope}) de una \texttt{CRL} para reducir la cantidad de certificados incluidos.
+	\item Emitir \emph{delta} \texttt{CRL} sólo con los nuevos certificados revocados.
+	\item \texttt{CRL}s indirectas.
+\end{itemize}
+
+Además, se implementan técnicas como \textbf{OSCP}: un servicio que permite saber si un certificado es válido o no. Hace una conslulta a la autoridad certificante, que responde con un mensaje firmado que puede ser: \emph{good}, \emph{revoked} o \emph{unknown}.
+
+\texttt{OSCP} tiene varios problemas:
+\begin{itemize}
+	\item ¿Cómo sé que una autoridad certificante es confiable?
+	\item X.509 usa los strings como Pascal (\texttt{ASN1}): longitud fija, con la longitud adelante de todo. Pero la mayoría de las aplicaciones que verifican están hechas en \texttt{C}. Luego, pudeo pedir un certificado para algo como ``facebook.com\\0midominio.com''. Si está mal implementado, la autoridad lo va a emitir para eso, pero el navegador puede leerlo como para ``facebook.com''.
+	\item Cuando una autoridad certificante responde por \texttt{OSCP} con \emph{unknown}, esa respuesta no está firmada. Si alguien está haciendo \emph{man in the middle}, puede mandar constantemente eso para evitar la validación de un certificado.
+\end{itemize}
+
+
+Las claves \texttt{PGP} también pueden ser revocadas mediante un menasje con un flag especial. Puede ser revocada por su firmante o, si lo permitió el dueño, que la revoque un tercero.
+
+\subsubsection{Tiempo de vida de los certificados}
+Según su tiempo de vida, los certificados pueden ser clasificados en dos cosas:
+\subsubsubsection{Corto plazo}
+\begin{itemize}
+	\item Se generan de manera automática.
+	\item Se utilizan para un mensaje o una sesión y luego se descartan.
+\end{itemize}
+
+\subsubsubsection{Largo plazo}
+\begin{itemize}
+	\item Son generadas por el usuario de manera explícita.
+	\item Se utilizan para autenticación y confidencialidad.
+\end{itemize}
+
+\subsubsection{A tener en cuenta en manejo de certificados}
+\begin{itemize}
+	\item Como se generan las claves.
+	\item Como se asocia una clave a la identidad de su poseedor.
+	\item Como se distribuyen las claves.
+	\item Como dos partes establecen una clave común.
+	\item Como se almacenan las claves de manera segura.
+	\item Que ocurre cuando se compromete una clave.
+	\item Como se destruyen las claves.
+\end{itemize}
+
+\subsubsection{PKCS: Public Key Cryptography Standards}
+Son un conjunto de estándares y especificaciones técnicas cuyo objeto es uniformizar las técnicas y protocolos de criptografía pública. 
+
+Algunas cosas de las que predica \texttt{PKCS} son:
+\begin{itemize}
+	\item Cómo se manejan estándares cifrados.
+	\item Cómo se hace un backup de claves.
+	\item Cómo se interactúa con un token criptográfico externo.
+\end{itemize}
+
+
+\subsubsection{PKI: Public Key Interface}
+Es una combinación de hardware y software, políticas y procedimientos que permiten asegurar la identidad de los participantes en un intercambio de datos usando criptografía de clave pública. No sólo hacen referencia a la parte teórica sino también a:
+\begin{itemize}
+	\item \textbf{Autoridades certificantes}: tercero confiable que da fé de la veracidad de la información incluida en los certificados que emiten. Emiten certificados digitales según su política de certificación (\texttt{CP}) (reglas que indican la aplicabilidad de un certificado digital a una comunidad y/o a una clase de aplicaciones con requerimientos de seguridad en común).
+
+	Las autoridades certificantes tienen un manual de procedimientos de certificación (\texttt{CPS}), que consiste en una declaración de las prácticas empleadas para emitir, administrar y revocar certificados.
+	\item \textbf{Autoridades de regirstro}: verifica la propiedad del alguna manera y le dice a la autoridad certificante que puede (o no) emitir el certificado. Por ejemplo, para emitir un certificado para una \texttt{URL} podría decirse ``tal dia a tal hora poné tal contenido en la página''.
+
+	Además, pueden iniciar revocaciones de certificados, autorizarlos o negar su creación y revocación, etc.
+	\item \textbf{Tercer usuario}: el receptor de un certificado que actúa basados en el mismo y/o en cualquier firma digital que se verifique con ese certificado.
+	\item \textbf{Suscriptores}: sujeto que solicita la emisión de un certificado.
+	\item \textbf{Repositorios}: estructuras encargadas de almacenar la información relativa a la \texttt{PKI}. Las más importantes son: 
+\end{itemize}
+
+\subsubsubsection{Emisión de certificados}
+Los pasos para la emisión de un certificado son:
+\begin{enumerate}
+	\item El suscriptor genera un par de claves. Firma la clave pública y la información que lo identifica con su clave privada. Luego envía todo a la autoridad certificante. \emph{Esto prueba que posee la privada correspodiente y protege la información.}
+	\item La autoridad certificante  verifica la firma del suscriptor en los datos recibidos. Opcionalmente se puede verificar la información por otros medios, tales como presencia física, correo electrónico, etc. En este paso interviene la autoridad de registro.
+	\item La autoridad certificante firma la clave pública y parte de la información que el suscriptor envió con su clave privada y crea el certificado. \emph{De esta manera se asocia el suscriptor con su clave pública y sus datos.}
+	\item El suscriptor recibe el certificado y verifica la firma de la autoridad certificante (mediante su clave pública) y los datos del certificado.
+	\emph{De esta manera se asegura que la autoridad certificante no cambió sus datos y se protege la información del certificado.}
+	\item La autoridad certificante publica el certificado.
+\end{enumerate}
+
+\subsubsection{Modelos de confianza}
+El modelo de autoridad certificante plantea el dilema de la confianza: ¿cómo se determina en qué certificados se puede confiar? ¿cómo se establece la confianza? ¿bajo qué circunstancias fluctúa esa confianza?.
+
+Se plantean muchos modelos de confianza:
+\begin{itemize}
+	\item Jerárquico: hay una única autoridad certificante que emite certificados para autoridades certificantes intermedias.
+	\item Modelo Web: tengo una lista interminable de autoridades certificantes en las que confío. Cualqiuera puede emitir para cualquiera.
+	\item Bridge CA: hay una autoridad certificante que hace de puente para otras.
+otras AC.
+	\item Certificación cruzada.
+	\item Reconocimiento cruzado.
+	\item CTL (lista de certificados confiables).
+\end{itemize}
+
+\subsubsection{Tipos de certificados}
+Existen muchos tipos de certificados distintos:
+\begin{itemize}
+	\item SSL.
+	\item S/MIME (mail).
+	\item S/MIME (personales).
+	\item Firma de código.
+	\item Autoridad certificante.
+	\item WPA-PSK.
+	\item VPN.
+\end{itemize}
+
+\subsection{Firma digital}
+La \textbf{firma digital} es un conjunto de datos expresados en formato digital que se utiliza para \textbf{identificar a un firmante}, \textbf{verificar la integridad del contenido de un documento digital} y \textbf{garantizar el no repudio del firmante}.
+
+La información debe reunir las siguientes condiciones: 
+\begin{itemize}
+	\item Autoría.
+	\item Integridad.
+	\item Confidencialidad.
+	\item Disponibilidad.
+\end{itemize}
+
+\subsection{Codificaciones}
+\subsubsection{Base64}
+\textbf{Base64} es un mecanismo de codificación que utiliza un conjunto de 64 caracteres para codificar cualquier valor posible de un byte. Toma 3 bytes y los convierte en 4. Usa letras mayúsculas y minúsculas, números, + y /. Para el padding usa =.
+
+\subsubsection{MIME}
+\emph{Multipurpose Internet Mail Extensions} (\texttt{MIME}) es un estándar de internet que extiende el format ode los mails para soportar texto que no sea \texttt{US-ASCII}, binarios anexados, etc. 
+
+Soporta distintos tipos de contenido (definido en el \emph{content-type}), tales como texto plano o richtext, imágenes, video, PostScript, multipart, etc.
+
+\subsubsection{SMIME}
+\emph{Secure MIME} (\texttt{SMIME}) es un estándar para cifrado de clave pública y firma de mails. Provee servicios de:
+\begin{itemize}
+	\item Autoría.
+	\item Integridad de mensaje.
+	\item No repudio.
+	\item Confidencialidad de los datos.
+\end{itemize}
+
+\subsubsection{ASN.1}
+\texttt{ANS.1} es una norma para representar datos que establece una sintaxis abstracta para la definición de estructuras independientemente de la arquitectura de hardware o lenguaje de implementación. Es utilizado en la definición de estructuras de datos para intercambio de aplicaciones.
+
+\subsubsection{OID}
+Un \textbf{object identifier} (\texttt{OID}) es un código de identificación único de un objeto o estructura que forma parte de una estructura jerárquica. Existe un registro internacional de \texttt{OID}s. Se utilizan para la identificación de 
+\begin{itemize}
+	\item Atributos.
+	\item Extensiones.
+	\item Algoritmos.
+	\item Políticas de certificación.
+	\item Estructuras de datos.
+\end{itemize}
+
+\subsection{OpenSSL}
+\textbf{OpenSSl} es una implementación open source de diversos algoritmos y estándares criptográficos.
+
+Se puede utilizar para:
+\begin{itemize}
+	\item Crear y ver certificados.
+	\item Generar números aleatorios.
+	\item Cifrados de varios tipos.
+	\item Firmar mails.
+\end{itemize}
+

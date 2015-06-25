@@ -1,0 +1,228 @@
+\section{Unidad 4}
+
+\subsection{Introducción}
+
+\begin{itemize}
+	\item Definiciones: 
+	\begin{itemize}
+		\item Autenticación: Asociación entre una identidad y un objeto.
+		\item Maneras de establecer identidad: \begin{itemize}
+			\item Que es lo que la entidad sabe.
+			\item Que es lo que la entidad tiene.
+			\item Que es lo que la entidad es físicamente (e.g., huellas digitales).
+			\item Donde esta la entidad.
+		\end{itemize}
+		\item Sistema de Autenticación: Tupla $(A,C,F,L,S)$ con: \begin{itemize}
+			\item $A$ es la información que prueba la identidad.
+			\item $C$ información almacenada digitalmente para validar la identidad.
+			\item $F$ función que transforma $A$ en $C$.
+			\item $L$ función que prueba la identidad.
+			\item $S$ un conjunto de funciones que permiten crear o alterar información en $A$ o $C$.
+		\end{itemize}
+		\item Ejemplo para sistema de almacenamiento de claves en texto plano:
+		\begin{itemize}
+			\item $A$: conjunto de strings que forman claves.
+			\item $C$: $A$
+			\item $F$: función identidad.
+			\item $L$: función de comparación de strings.
+			\item $S$: funciones para editar el archivo con las claves.
+		\end{itemize}
+		\item Claves: \begin{itemize}
+			\item Secuencias de caracteres o palabras.
+			\item Algoritmos como one-time passwords o challenge response.
+		\end{itemize}
+		\item Almacenamiento de claves \begin{itemize}
+			\item Texto transparente: Inseguro, si se compromete el archivo se comprometen todas las claves.
+			\item Archivo cifrado: Necesita claves de cifrado y descifrado, terminamos en problema anterior.
+			\item One way hash de la clave: Si se compromete el archivo, el atacante debe invertir la función
+			de one way hash, o adivinar las claves.
+		\end{itemize}
+		\item Salt: comprende bits aleatorios que  son usados como una de las entradas en una función derivadora de claves. 
+			La otra entrada es habitualmente una contraseña. La salida de la función derivadora de  claves se almacena como 
+			la versión cifrada de la contraseña. La sal puede también ser usada como parte de una clave en un cifrado u otro 
+			algoritmo criptográfico. La función de derivación de claves generalmente usa una función hash.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Sistemas de autentificación}
+
+\subsubsection{UNIX Passwords}
+
+\begin{itemize}
+	\item Usa hash de la clave, usando una función de hash dentro de 4096 para pasarlo a un string de 11 caracteres.
+	\item Sistema: \begin{itemize}
+		\item $A$: Strings de 8 o menos caracteres.
+		\item $C$: 2 letras de id de hash concatenadas a 11 letras del hash en si.
+		\item $F$: 4096 versiones de DES modificadas.
+		\item $L$: login, su
+		\item $S$: passwd, nispasswd, passwd+
+	\end{itemize}
+	\item Algoritmo \begin{itemize}
+		\item Cifra un bloque de 64 bits en 0 con DES y el password como clave.
+		\item Repite esto 25 veces usando como clave en cada paso el resultado de la anterior.
+		\item Se selecciona la variante de DES usando un SALT con la hora del día. Esta se almacena sin cifrar junto
+		con el password.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Ataques}
+
+\begin{itemize}
+	\item Ataque: Tiene como objetivo encontrar $f \in F$, $f(a) = c \in C$ y que $c$ este asociado a una entidad.
+		\begin{itemize}
+			\item Se puede lograr directamente o indirectamente (mediante un $l(a)$ tal que $f(l(a)) = c$).
+		\end{itemize}
+	\item Prevencion: \begin{itemize}
+		\item Ocultar la mayor cantidad de variables posible.
+		\item Bloquear acceso a $l \in L$ o al resultado de $l(a)$, por ejemplo anulando login desde la red.
+	\end{itemize}
+	\item Ataques posibles
+	\begin{itemize}
+		\item Diccionario: Consiste en adivinar probando todas las palabras de una lista. Se puede hacer offline
+		si conocemos $f$ y $c$ y probamos multiples $a$ hasta que coincida. Sino, hacemos intentos de login (mas lento).
+		\item Fuerza bruta: Probar todas las combinaciones posibles (menos eficiente que diccionario, necesito conocer
+		el espacio de busqueda).
+		\item Choques: Si no se utiliza SALT, a cada clave le corresponde un unico hash. Es fácil encontrar que dos usuarios
+		usan la misma clave si tengo la base de datos y el espacio de búsqueda se reduce significativamente. Puedo además
+		precomputar hashes y buscarlos en la base de datos de passwords $c$.
+		\item Formula de Anderson:
+
+		$$ P \geq \frac{T \cdot G}{N}$$
+	
+		\begin{itemize}
+			\item $P$ la probabilidad de obtener una clave en un período de tiempo.
+			\item $G$ el número de intentos posibles por unidad de tiempo.
+			\item $T$ la cantidad de unidades de tiempo.
+			\item $N$ el número de claves posibles.
+		\end{itemize}
+
+		\item Logins repetidos: Intentar darle al sistema desde afuera. Se puede enlentecer cortando despues de una
+		cierta cantidad de logins, deshabilitando la cuenta o creando un ambiente \textit{sandboxeado} para el agresor.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Claves}
+
+\begin{itemize}
+	\item Maneras de elegirlas: \begin{itemize}
+		\item Aleatorias: Las elige el sistema. Tienen casos borde (claves muy cortas, caracteres repetidos) si no se tiene
+		cuidado. Son difíciles de recordar y su calidad depende de la implementación del generador de números aleatorio.
+		\item Pronunciables: Basadas en generación de fonemas, lo que permite que sean fáciles de pronunciar y por ello de
+		recordar. Son pocas.
+		\item Elegidas por el usuario: Suelen ser ``faciles'', en el sentido que hay patrones establecidos. Se puede hacer
+		chequeo activo de claves para evitar que el usuario utilice claves muy sencillas. \begin{itemize}
+			\item \texttt{passwd+} provee un lenguaje de scripting para definir estas restricciones.
+			\item Se puede forzar el usuario a cambiar a un password nuevo cada cierto tiempo. Avisar con anticipación para que el
+			usuario pueda pensar.
+		\end{itemize}
+		\item Challenge response: El usuario y el sistema comparten una función secreta $f$, que puede ser una criptográfica
+		basada en alguna clave compartida. \begin{itemize}
+			\item El usuario pide ser autenticado.
+			\item El sistema le contesta un valor $r$ aleatorio que es el ``desafío''.
+			\item El usuario contesta $f(r)$, la ``respuesta''.
+			\item Se puede atacar de manera similar a las claves, si dispongo de $f$,$r$ y $f(r)$.
+			\item Se puede evitar cifrando el challenge $r$. 
+		\end{itemize}
+		\item Protocolo EKE: Asume que Alice y Bob tienen una clave $s$ que comparten. Generan una clave $k$ de sesión.
+
+		\ig{0.3}{U5_protocoloEKE.png}
+
+		\item One Time Passwords: Se invalidan una vez que son usados. Se envía un número y la respuesta es la clave
+		asociada a ese numero. Se dificulta sincronizar las claves, es dificil generar buenas claves aleatorias y
+		distribuir las claves entre los clientes y servidores como para poder hacer esto andar.
+		\item One Time Passwords con Hardware: \begin{itemize}
+			\item Tokens: Utilizado para calcular la respuesta a un challenge. Puede requerir de un PIN de usuario.
+			\item Tiempo: Cada lapso de tiempo muestra un número. El usuario usa ese número junto con una clave fija
+			adicional.
+		\end{itemize}
+		\item Biometría: Medición automática de características biológicas o de comportamiento de un individuo.
+		\begin{itemize}
+			\item Huellas digitales, mapeado a un grafo y comparado de manera aproximada con una base de datos.
+			\item Voces: Verificación y reconocimiento.
+			\item Ojos: Patrón único del iris, muy muy intrusivo.
+			\item Cara: Detección de patrones como largo del labio, ángulo de cejas, etc.
+			\item Secuencias de tipeo (presión sobre las teclas, cadencia, etc.)
+		\end{itemize}
+		\item Localización: Sabiendo donde esta el usuario, validar si esta ahi (usa GPS).
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{PAM}
+
+\begin{itemize}
+	\item \textit{Pluggable Authentication Modules}: Mecanismo flexible para la autenticación de usuarios. PAM
+	permite el desarrollo de programas independientes del mecanismo de autenticación a usar. Así es posible que
+	se pueda usar desde autenticación por password básica hasta mecanismos físicos o de localización.
+	\item Permite distintas políticas de autenticación para cada servicio.
+	\item Es configurable, utiliza un repositorio de métodos a usar con un archivo del mismo nombre que el servicio
+	a usar en \texttt{/etc/pam.d/}.
+	\item Módulos independientes efectuan el chequeo: \begin{itemize}
+		\item Sufficient: Acepta si el módulo acepta.
+		\item Required: Falla si el módulo falla, pero ejecuta todos los requisitos antes de reportar falla.
+		\item Requisite: Igual a required pero no falla en el resto.
+		\item Optional: Solo es invocado si todos fallan.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{GINA}
+
+\begin{itemize}
+	\item Graphical Identification and Authentication Library
+	\item Componente de Windows que se carga en el contexto de WinLogon. 
+	\item Atiende Ctrl+Alt+Del e interactua con el usuario. Luego arranca el proceso inicial de usuario (shell).
+	\item Puede ser reemplazado, hay implementaciones con biometría o tokens en hardware.
+	\item Servía para Windows XP/2003
+\end{itemize}
+
+\subsubsection{MS Credentials Providers}
+
+\begin{itemize}
+	\item Nuevo mecanismo a partir de Windows Vista.
+\end{itemize}
+
+\ig{0.7}{U5_MSCredentialsProviders.png}
+
+\subsection{Almacenamiento de claves}
+
+\begin{itemize}
+	\item Lan Manager Hash: \begin{itemize}
+		\item Se convierte todo a mayúsculas antes de crear el hash.
+		\item Se usa un set de characteres reducido dentro de ASCII.
+		\item El hash se divide en dos bloques de 7 caractéres. Si la clave tiene menos de 14
+		caractéres se paddea con null.
+		\item Utiliza DES con el password "KGS!@\#\$\%".
+		\item No usa SALT y el hash es un valor de 16 bytes.
+		\item Muy inseguro, se puede romper fácilmente.
+	\end{itemize}
+	\item NT Hash: \begin{itemize}
+		\item Distingue entre mayúsculas y minúsculas.
+		\item Usa MD4 (inseguro).
+		\item Longitud variable (no se paddea) hasta 128 caractéres.
+		\item No se usa salting.
+		\item NT4 lo soporta desde Service Pack 4.
+	\end{itemize}
+	\item Linux - MD5: \begin{itemize}
+		\item Contraseña se almacena en un archivo solo accesible por root (\texttt{/etc/shadow}) y la clave se
+		cifra usando tres campos separados por \$:
+
+		\begin{itemize}
+			\item El algoritmo de \textit{one way hashing} usado (1 es MD5).
+			\item El SALT usado.
+			\item El Hash propiamente dicho.	
+		\end{itemize}
+
+		\item Se pueden usar otros algoritmos como Blowfish o SHA-256 o SHA-512.
+		\item Se puede configurar el número de repeticiones.
+	\end{itemize}
+	\item OpenBSD: Implementa un mecanismo por el cual el tiempo computacional necesario para cifrar una password 
+	con una función de una vía puede ir variando en el tiempo, a medida que avanza la velocidad del hardware. 
+	Las claves de usuarios con mayores privilegios pueden ser configuradas para ser más  difíciles de calcular.
+\end{itemize}
+
+\subsubsection{Cracking - Herramientas}
+
+\begin{itemize}
+	\item John The Ripper: Permite crackear claves MD5, Crypt, Blowfish, LM, etc. Usando diccionarios, reglas o
+	fuerza bruta.
+	\item Rainbow Tables: Precomputar los pares (hash, texto en claro) y usarlos para buscar de manera rápida hashes.
+\end{itemize}
